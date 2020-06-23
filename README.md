@@ -16,3 +16,13 @@ yarn start-serve
 Not quite sure about production.
 
 Think running `yarn build` will get the client prepped to be served by the server.
+
+Currently `rsync`ing the required files to an ec2 instance:
+
+```
+rsync -av — progress -e "ssh -i ~/.ssh/aws-key-pair.pem" --exclude '.git' --exclude 'node_modules' ~/code/exquisite/ ubuntu@18.219.208.138:~/exquisite-prototype/
+```
+
+Have to make sure the server port is one supported by aws (normally `8000`).
+
+Have to figure out what I should send up/what can be excluded.
