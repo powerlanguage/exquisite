@@ -9,13 +9,15 @@ const server = http.createServer(app);
 
 const wss = new WebSocket.Server({ server });
 
+const PORT = process.env.PORT || 5000;
+
 app.use(express.static(`${__dirname}/build`));
 
 wss.on("connection", (socket) => {
   console.log("wss connection received");
   socket.send("hello from WSS");
   setInterval(() => {
-    socket.send(Math.random());
+    socket.send(new Date().toTimeString());
   }, 5000);
 });
 
@@ -33,5 +35,4 @@ app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "build/index.html"));
 });
 
-const PORT = 5000;
 server.listen(PORT, () => console.log(`Server listening on port ${PORT}`));

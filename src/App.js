@@ -1,7 +1,12 @@
 import React, { useEffect, useState } from "react";
 
+console.log(process.env);
+
 // Can this be set dynamically somehow?
-const WS_URL = "ws://localhost:5000";
+const WS_URL =
+  process.env.NODE_ENV === "development"
+    ? "ws://localhost:5000"
+    : window.location.origin.replace(/^http/, "ws");
 
 const ws = new WebSocket(WS_URL);
 
