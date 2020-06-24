@@ -45,10 +45,6 @@ wss.on("connection", (ws, req) => {
   });
 
   ws.send("hello from WSS");
-
-  setInterval(() => {
-    ws.send(new Date().toTimeString());
-  }, 5000);
 });
 
 // Shitty logger

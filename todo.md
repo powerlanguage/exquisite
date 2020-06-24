@@ -35,3 +35,6 @@ When connection is established, does it have an id?
             would this be the point we catch them up?
         if not in client list
             add to client list
+
+client
+test

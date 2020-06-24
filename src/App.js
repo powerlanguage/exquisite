@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 
 console.log("node env:", process.env.NODE_ENV);
 
@@ -17,66 +17,117 @@ const WS_URL =
 
 const ws = new WebSocket(WS_URL);
 
+const INITIAL_COORDS = { x: 0, y: 0 };
+
 export default function App() {
-  const [apiData, setApiData] = useState(null);
+  const [isDrawing, setIsDrawing] = useState(false);
+  const [coordinates, setCoordinates] = useState(null);
   const [wsMessages, setWsMessages] = useState([]);
 
-  const apiFetch = async () => {
-    const res = await fetch("/api/hello");
-    const data = await res.json();
-    setApiData(data);
-  };
+  const whiteboardRef = useRef(null);
 
-  console.log(READYSTATES[ws.readyState]);
+  // console.log(READYSTATES[ws.readyState]);
 
-  const handleWSMessage = (message) => {
-    console.log(message);
-    setWsMessages([...wsMessages, message]);
-  };
+  // const handleWSMessage = (message) => {
+  //   console.log(message);
+  //   setWsMessages([...wsMessages, message]);
+  // };
 
   // Check WS ready state before sending
-  const sendWSMessage = (message) => {
-    ws.send(message);
-  };
+  // const sendWSMessage = (message) => {
+  //   ws.send(message);
+  // };
+
+  // useEffect(() => {
+  //   ws.onopen = () => {
+  //     console.log("WS connected");
+  //   };
+  //   ws.onclose = () => {
+  //     console.log("WS disconnected");
+  //   };
+  //   ws.onmessage = (event) => {
+  //     console.log("WS message received");
+  //     const message = event.data;
+  //     handleWSMessage(message);
+  //   };
+  // }, [handleWSMessage]);
+
+  const startDrawing = useCallback((e) => {
+    setIsDrawing(true);
+    setCoordinates({ x: e.clientX, y: e.clientY });
+    console.log(e.type);
+  }, []);
 
   useEffect(() => {
-    ws.onopen = () => {
-      console.log("WS connected");
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    whiteboard.addEventListener("mousedown", startDrawing);
+    return () => whiteboard.removeEventListener("mousedown", startDrawing);
+  }, [startDrawing]);
+
+  const stopDrawing = useCallback((e) => {
+    setIsDrawing(false);
+    setCoordinates(null);
+    console.log(e.type);
+  }, []);
+
+  useEffect(() => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    whiteboard.addEventListener("mouseup", stopDrawing);
+    whiteboard.addEventListener("mouseleave", stopDrawing);
+    return () => {
+      whiteboard.removeEventListener("mouseup", stopDrawing);
+      whiteboard.removeEventListener("mouseleave", stopDrawing);
     };
-    ws.onclose = () => {
-      console.log("WS disconnected");
+  }, [stopDrawing]);
+
+  const draw = useCallback(
+    (e) => {
+      if (isDrawing && coordinates) {
+        console.log(coordinates);
+        console.log("Hey!");
+        drawLine({
+          x1: coordinates.x,
+          y1: coordinates.y,
+          x2: e.clientX,
+          y2: e.clientY,
+        });
+        setCoordinates({ x: e.clientX, y: e.clientY });
+      }
+    },
+    [isDrawing, coordinates]
+  );
+
+  useEffect(() => {
+    whiteboardRef.current.addEventListener("mousemove", draw);
+    return () => {
+      whiteboardRef.current.removeEventListener("mousemove", draw);
     };
-    ws.onmessage = (event) => {
-      console.log("WS message received");
-      const message = event.data;
-      handleWSMessage(message);
-    };
-  }, [handleWSMessage]);
+  }, [draw]);
+
+  const drawLine = ({ x1, y1, x2, y2, emit }) => {
+    const ctx = whiteboardRef.current.getContext("2d");
+    ctx.beginPath();
+    ctx.strokeStyle = "red";
+    ctx.lineWidth = 2;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.closePath();
+    if (emit) {
+      // TODO: emit
+    }
+    console.log({ x1, y1, x2, y2 });
+  };
 
   return (
     <div>
-      <h1>HELLO WORLD DEV!</h1>
-      <div>
-        <h2>API</h2>
-        <button onClick={apiFetch}>apiFetch</button>
-        {apiData && JSON.stringify(apiData)}
-      </div>
-      <div>
-        <h2>WS</h2>
-        {JSON.stringify(wsMessages)}
-      </div>
-      <div>
-        <h3>Send to server</h3>
-        <button
-          onClick={() =>
-            sendWSMessage("this is the client sending a message to the server")
-          }
-        >
-          Send message to server
-        </button>
-        <button onClick={() => sendWSMessage("broadcast")}>Broadcast</button>
-        <button onClick={() => sendWSMessage("emit")}>Emit</button>
-      </div>
+      <canvas
+        width={window.innerWidth}
+        height={window.innerHeight}
+        ref={whiteboardRef}
+      ></canvas>
     </div>
   );
 }
