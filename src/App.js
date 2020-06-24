@@ -1,4 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+// import throttle from "lodash.throttle";
+
+import "./App.css";
 
 console.log("node env:", process.env.NODE_ENV);
 
