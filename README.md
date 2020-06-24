@@ -3,9 +3,8 @@ Weird hybrid where I am trying to have a client/server set up without a ton of b
 - Express server is set up to serve the backend.
 - CRA's webpack server serves the client with hot reloading in dev
 - `package.json` has a "proxy" set up to allow the client to make API requests in dev
-- For production, see below.
 
-For
+For dev:
 
 ```
 yarn start-client
@@ -13,9 +12,11 @@ yarn start-client
 yarn start-serve
 ```
 
-Not quite sure about production.
+For prod:
 
-Think running `yarn build` will get the client prepped to be served by the server.
+Run `yarn build` to get the client prepped to be served by the server.
+
+Upload the repo to a server and run `yarn start-server`. The react app from `/build/` should be served to any request.
 
 Currently `rsync`ing the required files to an ec2 instance:
 
@@ -26,3 +27,11 @@ rsync -av — progress -e "ssh -i ~/.ssh/aws-key-pair.pem" --exclude '.git' --ex
 Have to make sure the server port is one supported by aws (normally `8000`).
 
 Have to figure out what I should send up/what can be excluded.
+
+TODO:
+
+- Better definition of how to structure messages
+- Some sort of client id/persistence?
+- typscript support?
+- disconnections / reconnections
+- error handling
