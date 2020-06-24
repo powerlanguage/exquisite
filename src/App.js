@@ -30,26 +30,49 @@ export default function App() {
 
   // console.log(READYSTATES[ws.readyState]);
 
-  const handleWSMessage = (message) => {
-    console.log(message);
-    const { type, payload } = JSON.parse(message);
-    switch (type) {
-      case "draw": {
-        drawLine({ ...payload, emit: false });
-        return;
-      }
-
-      default: {
-        console.log("WS Unknown message type received");
-        return;
-      }
-    }
-  };
-
   // Check WS ready state before sending
-  const sendWSMessage = (message) => {
+  const sendWSMessage = useCallback((message) => {
     ws.send(message);
-  };
+  }, []);
+
+  const drawLine = useCallback(
+    ({ x1, y1, x2, y2, emit }) => {
+      const ctx = whiteboardRef.current.getContext("2d");
+      ctx.beginPath();
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.closePath();
+      if (emit) {
+        sendWSMessage(
+          JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2 } })
+        );
+      }
+      console.log({ x1, y1, x2, y2 });
+    },
+    [sendWSMessage]
+  );
+
+  const handleWSMessage = useCallback(
+    (message) => {
+      console.log(message);
+      const { type, payload } = JSON.parse(message);
+      switch (type) {
+        case "draw": {
+          drawLine({ ...payload, emit: false });
+          return;
+        }
+
+        default: {
+          console.log("WS Unknown message type received");
+          return;
+        }
+      }
+    },
+    [drawLine]
+  );
 
   useEffect(() => {
     ws.onopen = () => {
@@ -108,7 +131,7 @@ export default function App() {
         setCoordinates({ x: e.clientX, y: e.clientY });
       }
     },
-    [isDrawing, coordinates]
+    [isDrawing, coordinates, drawLine]
   );
 
   useEffect(() => {
@@ -119,23 +142,6 @@ export default function App() {
       whiteboard.removeEventListener("mousemove", draw);
     };
   }, [draw]);
-
-  const drawLine = ({ x1, y1, x2, y2, emit }) => {
-    const ctx = whiteboardRef.current.getContext("2d");
-    ctx.beginPath();
-    ctx.strokeStyle = "red";
-    ctx.lineWidth = 2;
-    ctx.moveTo(x1, y1);
-    ctx.lineTo(x2, y2);
-    ctx.stroke();
-    ctx.closePath();
-    if (emit) {
-      sendWSMessage(
-        JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2 } })
-      );
-    }
-    console.log({ x1, y1, x2, y2 });
-  };
 
   return (
     <div>
