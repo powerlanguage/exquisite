@@ -25,7 +25,7 @@ const INITIAL_COORDS = { x: 0, y: 0 };
 export default function App() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
-
+  const [id, setId] = useState(null);
   const whiteboardRef = useRef(null);
 
   // console.log(READYSTATES[ws.readyState]);
@@ -47,12 +47,12 @@ export default function App() {
       ctx.closePath();
       if (emit) {
         sendWSMessage(
-          JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2 } })
+          JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2, id } })
         );
       }
       console.log({ x1, y1, x2, y2 });
     },
-    [sendWSMessage]
+    [sendWSMessage, id]
   );
 
   const handleWSMessage = useCallback(
@@ -60,11 +60,14 @@ export default function App() {
       console.log(message);
       const { type, payload } = JSON.parse(message);
       switch (type) {
+        case "setup": {
+          setId(payload.id);
+          return;
+        }
         case "draw": {
           drawLine({ ...payload, emit: false });
           return;
         }
-
         default: {
           console.log("WS Unknown message type received");
           return;
@@ -149,7 +152,7 @@ export default function App() {
         width={window.innerWidth}
         height={window.innerHeight}
         ref={whiteboardRef}
-      ></canvas>
+      />
     </div>
   );
 }

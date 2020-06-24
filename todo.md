@@ -36,5 +36,12 @@ When connection is established, does it have an id?
         if not in client list
             add to client list
 
+<!-- prettier-ignore -->
+server
+    user connects
+        assign canvas - this is required to be able to associate a socket with a canvas.
+    receives update
+        broadcast to neighbors
 client
-test
+    on draw
+        send line data
