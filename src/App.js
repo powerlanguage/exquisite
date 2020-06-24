@@ -1,6 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 
-console.log(process.env);
+console.log("node env:", process.env.NODE_ENV);
+
+const READYSTATES = {
+  0: "CONNECTING",
+  1: "OPEN",
+  2: "CLOSING",
+  3: "CLOSED",
+};
 
 // Can this be set dynamically somehow?
 const WS_URL =
@@ -20,6 +27,18 @@ export default function App() {
     setApiData(data);
   };
 
+  console.log(READYSTATES[ws.readyState]);
+
+  const handleWSMessage = (message) => {
+    console.log(message);
+    setWsMessages([...wsMessages, message]);
+  };
+
+  // Check WS ready state before sending
+  const sendWSMessage = (message) => {
+    ws.send(message);
+  };
+
   useEffect(() => {
     ws.onopen = () => {
       console.log("WS connected");
@@ -29,11 +48,10 @@ export default function App() {
     };
     ws.onmessage = (event) => {
       console.log("WS message received");
-      console.log("existing messages", wsMessages);
-      console.log("new data", event.data);
-      setWsMessages([...wsMessages, event.data]);
+      const message = event.data;
+      handleWSMessage(message);
     };
-  }, [wsMessages]);
+  }, [handleWSMessage]);
 
   return (
     <div>
@@ -46,6 +64,18 @@ export default function App() {
       <div>
         <h2>WS</h2>
         {JSON.stringify(wsMessages)}
+      </div>
+      <div>
+        <h3>Send to server</h3>
+        <button
+          onClick={() =>
+            sendWSMessage("this is the client sending a message to the server")
+          }
+        >
+          Send message to server
+        </button>
+        <button onClick={() => sendWSMessage("broadcast")}>Broadcast</button>
+        <button onClick={() => sendWSMessage("emit")}>Emit</button>
       </div>
     </div>
   );

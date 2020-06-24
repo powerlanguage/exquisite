@@ -11,19 +11,49 @@ const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 5000;
 
+const clients = [];
+
 app.use(express.static(`${__dirname}/build`));
 
-wss.on("connection", (socket) => {
-  console.log("wss connection received");
-  socket.send("hello from WSS");
+// TODO: parse cookies from req to determine if recent connection
+wss.on("connection", (ws, req) => {
+  console.log("[ws] connection received");
+  clients.push(ws);
+  console.log("[ws]", wss.clients.size, "connected clients");
+
+  ws.on("message", (message) => {
+    console.log("[ws] message received", message);
+
+    switch (message) {
+      case "broadcast": {
+        wss.clients.forEach((client) =>
+          client.send("server broadcasting message to all clients")
+        );
+        return;
+      }
+      case "emit": {
+        wss.clients.forEach((client) => {
+          if (client !== ws) {
+            client.send("server emitting message to all other clients");
+          }
+          return;
+        });
+      }
+      default:
+        console.log("[ws] unknown message");
+    }
+  });
+
+  ws.send("hello from WSS");
+
   setInterval(() => {
-    socket.send(new Date().toTimeString());
+    ws.send(new Date().toTimeString());
   }, 5000);
 });
 
 // Shitty logger
 app.use((req, res, next) => {
-  console.log(req.path);
+  console.log("[http]", req.path);
   next();
 });
 

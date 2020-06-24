@@ -21,4 +21,17 @@ server should broadcast to specific canvases
 
 that way each canvas can be listening for updates it should receive
 
-don
+For tictactoo I am sending the entire gamestate down to every client.
+
+Set up generic action parsing/method calling on both client and server.
+
+<!-- prettier-ignore -->
+When connection is established, does it have an id?
+    if not:
+        create one and return to client
+        store in clients list
+    if does:
+        if in client list
+            would this be the point we catch them up?
+        if not in client list
+            add to client list
