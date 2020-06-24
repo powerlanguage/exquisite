@@ -11,7 +11,8 @@ const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 5000;
 
-let clients = 1;
+let clients = 0;
+const canvasIds = [0, 1];
 
 app.use(express.static(`${__dirname}/build`));
 
@@ -24,7 +25,7 @@ wss.on("connection", (ws, req) => {
   ws.on("message", (message) => {
     const { type, payload } = JSON.parse(message);
 
-    if (!payload.id) {
+    if (!payload.id && payload.id !== 0) {
       console.log("[ws] no id received");
       return;
     }
@@ -51,7 +52,11 @@ wss.on("connection", (ws, req) => {
     }
   });
 
-  ws.send(JSON.stringify({ type: "setup", payload: { id: clients } }));
+  if (clients === 0) {
+    ws.send(JSON.stringify({ type: "setup", payload: { ids: [0, 1] } }));
+  } else {
+    ws.send(JSON.stringify({ type: "setup", payload: { ids: [1, 0] } }));
+  }
   clients += 1;
 });
 

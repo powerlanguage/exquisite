@@ -127,3 +127,7 @@ html {
 * {
   box-sizing: inherit;
 }
+
+canvas {
+  border: 1px solid black;
+}

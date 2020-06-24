@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useRef, useCallback } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 // import throttle from "lodash.throttle";
+import Whiteboard from "./Whiteboard";
 
 import "./App.css";
 
@@ -20,62 +21,36 @@ const WS_URL =
 
 const ws = new WebSocket(WS_URL);
 
-const INITIAL_COORDS = { x: 0, y: 0 };
-
 export default function App() {
-  const [isDrawing, setIsDrawing] = useState(false);
-  const [coordinates, setCoordinates] = useState(null);
-  const [id, setId] = useState(null);
-  const whiteboardRef = useRef(null);
-
   // console.log(READYSTATES[ws.readyState]);
+
+  const [canvasIds, setCanvasIds] = useState(null);
+  const [lastMessage, setLastMessage] = useState(null);
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback((message) => {
     ws.send(message);
   }, []);
 
-  const drawLine = useCallback(
-    ({ x1, y1, x2, y2, emit }) => {
-      const ctx = whiteboardRef.current.getContext("2d");
-      ctx.beginPath();
-      ctx.strokeStyle = "red";
-      ctx.lineWidth = 2;
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-      ctx.closePath();
-      if (emit) {
-        sendWSMessage(
-          JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2, id } })
-        );
+  const handleWSMessage = useCallback((message) => {
+    console.log(message);
+    const { type, payload } = JSON.parse(message);
+    switch (type) {
+      case "setup": {
+        setCanvasIds(payload.ids);
+        return;
       }
-      console.log({ x1, y1, x2, y2 });
-    },
-    [sendWSMessage, id]
-  );
-
-  const handleWSMessage = useCallback(
-    (message) => {
-      console.log(message);
-      const { type, payload } = JSON.parse(message);
-      switch (type) {
-        case "setup": {
-          setId(payload.id);
-          return;
-        }
-        case "draw": {
-          drawLine({ ...payload, emit: false });
-          return;
-        }
-        default: {
-          console.log("WS Unknown message type received");
-          return;
-        }
+      case "draw": {
+        setLastMessage(payload);
+        console.log("TODO: App wants to draw to a canvas here plz");
+        return;
       }
-    },
-    [drawLine]
-  );
+      default: {
+        console.log("WS Unknown message type received");
+        return;
+      }
+    }
+  }, []);
 
   useEffect(() => {
     ws.onopen = () => {
@@ -91,68 +66,26 @@ export default function App() {
     };
   }, [handleWSMessage]);
 
-  const startDrawing = useCallback((e) => {
-    setIsDrawing(true);
-    setCoordinates({ x: e.clientX, y: e.clientY });
-    console.log(e.type);
-  }, []);
-
-  useEffect(() => {
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    whiteboard.addEventListener("mousedown", startDrawing);
-    return () => whiteboard.removeEventListener("mousedown", startDrawing);
-  }, [startDrawing]);
-
-  const stopDrawing = useCallback((e) => {
-    setIsDrawing(false);
-    setCoordinates(null);
-    console.log(e.type);
-  }, []);
-
-  useEffect(() => {
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    whiteboard.addEventListener("mouseup", stopDrawing);
-    whiteboard.addEventListener("mouseleave", stopDrawing);
-    return () => {
-      whiteboard.removeEventListener("mouseup", stopDrawing);
-      whiteboard.removeEventListener("mouseleave", stopDrawing);
-    };
-  }, [stopDrawing]);
-
-  const draw = useCallback(
-    (e) => {
-      if (isDrawing && coordinates) {
-        drawLine({
-          x1: coordinates.x,
-          y1: coordinates.y,
-          x2: e.clientX,
-          y2: e.clientY,
-          emit: true,
-        });
-        setCoordinates({ x: e.clientX, y: e.clientY });
-      }
-    },
-    [isDrawing, coordinates, drawLine]
-  );
-
-  useEffect(() => {
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    whiteboard.addEventListener("mousemove", draw);
-    return () => {
-      whiteboard.removeEventListener("mousemove", draw);
-    };
-  }, [draw]);
-
   return (
-    <div>
-      <canvas
-        width={window.innerWidth}
-        height={window.innerHeight}
-        ref={whiteboardRef}
-      />
-    </div>
+    <React.Fragment>
+      {!canvasIds ? (
+        "Loading..."
+      ) : (
+        <div style={{ display: "flex", flexDirection: "row" }}>
+          {canvasIds.map((id, index) => (
+            <Whiteboard
+              isActive={index === 0}
+              id={id}
+              width={300}
+              height={300}
+              onEmit={sendWSMessage}
+              lineToDraw={
+                lastMessage && lastMessage.id === id ? lastMessage : null
+              }
+            />
+          ))}
+        </div>
+      )}
+    </React.Fragment>
   );
 }
