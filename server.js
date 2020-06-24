@@ -23,8 +23,8 @@ wss.on("connection", (ws, req) => {
 
   ws.on("message", (message) => {
     console.log("[ws] message received", message);
-
-    switch (message) {
+    const { type, payload } = JSON.parse(message);
+    switch (type) {
       case "broadcast": {
         wss.clients.forEach((client) =>
           client.send("server broadcasting message to all clients")
@@ -34,7 +34,7 @@ wss.on("connection", (ws, req) => {
       case "emit": {
         wss.clients.forEach((client) => {
           if (client !== ws) {
-            client.send("server emitting message to all other clients");
+            client.send(JSON.stringify({ type: "draw", payload }));
           }
           return;
         });

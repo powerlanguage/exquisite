@@ -25,35 +25,45 @@ const INITIAL_COORDS = { x: 0, y: 0 };
 export default function App() {
   const [isDrawing, setIsDrawing] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
-  const [wsMessages, setWsMessages] = useState([]);
 
   const whiteboardRef = useRef(null);
 
   // console.log(READYSTATES[ws.readyState]);
 
-  // const handleWSMessage = (message) => {
-  //   console.log(message);
-  //   setWsMessages([...wsMessages, message]);
-  // };
+  const handleWSMessage = (message) => {
+    console.log(message);
+    const { type, payload } = JSON.parse(message);
+    switch (type) {
+      case "draw": {
+        drawLine({ ...payload, emit: false });
+        return;
+      }
+
+      default: {
+        console.log("WS Unknown message type received");
+        return;
+      }
+    }
+  };
 
   // Check WS ready state before sending
-  // const sendWSMessage = (message) => {
-  //   ws.send(message);
-  // };
+  const sendWSMessage = (message) => {
+    ws.send(message);
+  };
 
-  // useEffect(() => {
-  //   ws.onopen = () => {
-  //     console.log("WS connected");
-  //   };
-  //   ws.onclose = () => {
-  //     console.log("WS disconnected");
-  //   };
-  //   ws.onmessage = (event) => {
-  //     console.log("WS message received");
-  //     const message = event.data;
-  //     handleWSMessage(message);
-  //   };
-  // }, [handleWSMessage]);
+  useEffect(() => {
+    ws.onopen = () => {
+      console.log("WS connected");
+    };
+    ws.onclose = () => {
+      console.log("WS disconnected");
+    };
+    ws.onmessage = (event) => {
+      console.log("WS message received");
+      const message = event.data;
+      handleWSMessage(message);
+    };
+  }, [handleWSMessage]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -88,13 +98,12 @@ export default function App() {
   const draw = useCallback(
     (e) => {
       if (isDrawing && coordinates) {
-        console.log(coordinates);
-        console.log("Hey!");
         drawLine({
           x1: coordinates.x,
           y1: coordinates.y,
           x2: e.clientX,
           y2: e.clientY,
+          emit: true,
         });
         setCoordinates({ x: e.clientX, y: e.clientY });
       }
@@ -103,9 +112,11 @@ export default function App() {
   );
 
   useEffect(() => {
-    whiteboardRef.current.addEventListener("mousemove", draw);
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    whiteboard.addEventListener("mousemove", draw);
     return () => {
-      whiteboardRef.current.removeEventListener("mousemove", draw);
+      whiteboard.removeEventListener("mousemove", draw);
     };
   }, [draw]);
 
@@ -119,7 +130,9 @@ export default function App() {
     ctx.stroke();
     ctx.closePath();
     if (emit) {
-      // TODO: emit
+      sendWSMessage(
+        JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2 } })
+      );
     }
     console.log({ x1, y1, x2, y2 });
   };
