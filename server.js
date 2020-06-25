@@ -11,10 +11,16 @@ const wss = new WebSocket.Server({ server });
 
 const PORT = process.env.PORT || 5000;
 
-let numClients = 0;
+const MAX_USERS = 9;
+nextCanvasId = 0;
 const canvasIds = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+const users = [];
 
 app.use(express.static(`${__dirname}/build`));
+
+function broadcast(message) {
+  wss.clients.forEach((client) => client.send(message));
+}
 
 // TODO: parse cookies from req to determine if recent connection
 wss.on("connection", (ws, req) => {
@@ -25,21 +31,35 @@ wss.on("connection", (ws, req) => {
   ws.on("message", (message) => {
     const { type, payload } = JSON.parse(message);
 
-    if (!payload.id && payload.id !== 0) {
-      console.log("[ws] no id received");
-      return;
-    }
-
     console.log("[ws] message received", message);
 
     switch (type) {
+      case "new user": {
+        if (users.length < MAX_USERS) {
+          const newUser = {
+            username: payload.username,
+            canvasId: nextCanvasId,
+          };
+          users.push(newUser);
+          nextCanvasId += 1;
+          // DRY - This repeats the broadcast code below
+          broadcast(JSON.stringify({ type: "set users", payload: users }));
+          return;
+        } else {
+          console.log("[ws] hit limit for number of users");
+        }
+      }
       case "broadcast": {
         wss.clients.forEach((client) =>
-          client.send("server broadcasting message to all clients")
+          client.send("TODO: server broadcasting message to all clients")
         );
         return;
       }
-      case "emit": {
+      case "emit draw": {
+        if (!payload.id && payload.id !== 0) {
+          console.log("[ws] received draw event with no id");
+          return;
+        }
         wss.clients.forEach((client) => {
           if (client !== ws) {
             client.send(JSON.stringify({ type: "draw", payload }));
@@ -51,25 +71,6 @@ wss.on("connection", (ws, req) => {
         console.log("[ws] unknown message");
     }
   });
-
-  if (numClients < canvasIds.length) {
-    const nextId = numClients;
-    ws.send(
-      JSON.stringify({
-        type: "setup",
-        payload: { canvasId: nextId, canvasIds },
-      })
-    );
-    numClients += 1;
-  } else {
-    console.log("[ws] hit limit for number of connections");
-    ws.send(
-      JSON.stringify({
-        type: "error",
-        payload: { message: "hit limit for number of connections" },
-      })
-    );
-  }
 });
 
 // Shitty logger
@@ -78,8 +79,9 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get("/api/hello", (req, res) => {
-  res.send(JSON.stringify({ randomValue: Math.random() }));
+app.get("/api/start", (req, res) => {
+  broadcast(JSON.stringify({ type: "set game state", payload: "IN_PROGRESS" }));
+  res.send("starting");
 });
 
 app.get("*", (req, res) => {

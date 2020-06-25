@@ -4,6 +4,7 @@ import styles from "./Whiteboard.module.css";
 export default function Whiteboard({
   isActive,
   id,
+  username,
   width,
   height,
   onEmit,
@@ -41,7 +42,7 @@ export default function Whiteboard({
 
       if (isActive) {
         onEmit(
-          JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2, id } })
+          JSON.stringify({ type: "emit draw", payload: { x1, y1, x2, y2, id } })
         );
       }
       console.log({ x1, y1, x2, y2 });
@@ -124,9 +125,7 @@ export default function Whiteboard({
         ref={whiteboardRef}
         id={`canvas-${id}`}
       />
-      <div className={styles.info}>
-        {id} {isActive ? "active" : "inactive"}
-      </div>
+      <div className={styles.info}>{username}</div>
     </div>
   );
 }

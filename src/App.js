@@ -2,10 +2,16 @@ import React, { useEffect, useCallback, useState } from "react";
 // import throttle from "lodash.throttle";
 import Whiteboard from "./Whiteboard";
 import styles from "./App.module.css";
+import SetUsername from "./SetUsername";
 
 // import "./App.css";
 
 console.log("node env:", process.env.NODE_ENV);
+
+const GAME_STATE = {
+  WAITING: "WAITING",
+  IN_PROGRESS: "IN_PROGRESS",
+};
 
 const READYSTATES = {
   0: "CONNECTING",
@@ -27,9 +33,10 @@ const ws = new WebSocket(WS_URL);
 export default function App() {
   // console.log(READYSTATES[ws.readyState]);
 
-  const [canvasId, setCanvasId] = useState(null);
-  const [canvasIds, setCanvasIds] = useState(null);
+  const [users, setUsers] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
+  const [username, setUsername] = useState("");
+  const [gameState, setGameState] = useState(GAME_STATE.WAITING);
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback((message) => {
@@ -41,13 +48,18 @@ export default function App() {
     console.log(message);
     const { type, payload } = JSON.parse(message);
     switch (type) {
-      case "setup": {
-        setCanvasId(payload.canvasId);
-        setCanvasIds(payload.canvasIds);
+      case "set users": {
+        console.log("setting users", payload);
+        setUsers(payload);
         return;
       }
       case "draw": {
+        // TODO this word
         setLastMessage(payload);
+        return;
+      }
+      case "set game state": {
+        setGameState(payload);
         return;
       }
       default: {
@@ -71,26 +83,53 @@ export default function App() {
     };
   }, [handleWSMessage]);
 
+  useEffect(() => {
+    if (username) {
+      // Check prevents running on initial render
+      sendWSMessage(
+        JSON.stringify({ type: "new user", payload: { username } })
+      );
+    }
+  }, [username]);
+
   return (
     <React.Fragment>
-      {!canvasIds ? (
-        "Loading..."
+      {gameState === GAME_STATE.WAITING ? (
+        <div>
+          <h1>Setting up game</h1>
+          {!username ? (
+            <SetUsername onSubmit={setUsername} />
+          ) : (
+            <div>
+              <p>Hello {username}</p>
+              <p>
+                {users &&
+                  `Connected users: ${users
+                    .map((user) => user.username)
+                    .join(", ")}`}
+              </p>
+            </div>
+          )}
+        </div>
       ) : (
         <div
           className={styles.whiteboards}
           style={{ width: `${WHITEBOARD_SIZE * 3}px` }}
         >
-          {canvasIds.map((id) => (
+          {users.map((user) => (
             <Whiteboard
-              isActive={id === canvasId}
-              id={id}
+              isActive={user.username === username}
+              username={user.username}
+              id={user.canvasId}
               width={WHITEBOARD_SIZE}
               height={WHITEBOARD_SIZE}
               onEmit={sendWSMessage}
               lineToDraw={
-                lastMessage && lastMessage.id === id ? lastMessage : null
+                lastMessage && lastMessage.id === user.canvasId
+                  ? lastMessage
+                  : null
               }
-              key={id}
+              key={user.canvasId}
             />
           ))}
         </div>

@@ -46,18 +46,22 @@ client
     on draw
         send line data
 
-[ ] canvas clears on resize
-[ ] color picker
-[ ] brush size
-[ ] eraser?
 [x] concept of different canvases
 [x] 9 canvases, same view for every user
 [x] move css to modules
 [x] cursor when hovering on other canvases
-[ ] support different size screens
+[ ] batch messages per stroke
 [ ] login page
 [ ] display names
+[ ] try/catch for various socket states
+[ ] pass handle functions directly to canvas instead of binding via ref
+[ ] support different size screens
 [ ] session-ization
-[ ] batch messages per stroke
+[ ] canvas clears on resize
+[ ] touch controls
+[ ] color picker
+[ ] brush size
+[ ] eraser?
 [ ] normalization
 [ ] investigate canvas zooming
+[ ] need to think about people joining after things are underway - they only see ink drawn after they joined
