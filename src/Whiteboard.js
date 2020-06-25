@@ -19,9 +19,24 @@ export default function Whiteboard({
   const [coordinates, setCoordinates] = useState(null);
   const whiteboardRef = useRef(null);
 
+  const getRelativeCoords = (e) => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    const { left, top } = whiteboard.getBoundingClientRect();
+    const x = e.clientX - left;
+    const y = e.clientY - top;
+    return { x, y };
+  };
+
   const drawLine = useCallback(
     ({ x1, y1, x2, y2 }) => {
-      const ctx = whiteboardRef.current.getContext("2d");
+      if (!whiteboardRef.current) return;
+      const whiteboard = whiteboardRef.current;
+      const ctx = whiteboard.getContext("2d");
+      console.log(
+        `drawing to ${isActive ? "active" : "inactive"} canvas ${id}`
+      );
+
       ctx.beginPath();
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
@@ -29,6 +44,7 @@ export default function Whiteboard({
       ctx.lineTo(x2, y2);
       ctx.stroke();
       ctx.closePath();
+
       if (isActive) {
         onEmit(
           JSON.stringify({ type: "emit", payload: { x1, y1, x2, y2, id } })
@@ -46,16 +62,17 @@ export default function Whiteboard({
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
-    setCoordinates({ x: e.clientX, y: e.clientY });
+    setCoordinates(getRelativeCoords(e));
     console.log(e.type);
   }, []);
 
   useEffect(() => {
+    if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     whiteboard.addEventListener("mousedown", startDrawing);
     return () => whiteboard.removeEventListener("mousedown", startDrawing);
-  }, [startDrawing]);
+  }, [startDrawing, isActive]);
 
   const stopDrawing = useCallback((e) => {
     setIsDrawing(false);
@@ -64,6 +81,7 @@ export default function Whiteboard({
   }, []);
 
   useEffect(() => {
+    if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     whiteboard.addEventListener("mouseup", stopDrawing);
@@ -72,35 +90,42 @@ export default function Whiteboard({
       whiteboard.removeEventListener("mouseup", stopDrawing);
       whiteboard.removeEventListener("mouseleave", stopDrawing);
     };
-  }, [stopDrawing]);
+  }, [stopDrawing, isActive]);
 
   const draw = useCallback(
     (e) => {
       if (isDrawing && coordinates) {
+        const { x, y } = getRelativeCoords(e);
         drawLine({
           x1: coordinates.x,
           y1: coordinates.y,
-          x2: e.clientX,
-          y2: e.clientY,
+          x2: x,
+          y2: y,
         });
-        setCoordinates({ x: e.clientX, y: e.clientY });
+        setCoordinates({ x, y });
       }
     },
     [isDrawing, coordinates, drawLine]
   );
 
   useEffect(() => {
+    if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     whiteboard.addEventListener("mousemove", draw);
     return () => {
       whiteboard.removeEventListener("mousemove", draw);
     };
-  }, [draw]);
+  }, [draw, isActive]);
 
   return (
     <div style={{ position: "relative" }}>
-      <canvas width={width} height={height} ref={whiteboardRef} />
+      <canvas
+        width={width}
+        height={height}
+        ref={whiteboardRef}
+        id={`canvas-${id}`}
+      />
       <div style={{ position: "absolute", top: 0, left: 0 }}>
         {id} {isActive ? "active" : "inactive"}
       </div>

@@ -45,3 +45,10 @@ server
 client
     on draw
         send line data
+
+[ ] canvas clears on resize
+[ ] color picker
+[x] concept of different canvases
+[ ] 9 canvases, same view for every user
+[ ] normalization
+[ ] investigate canvas zooming

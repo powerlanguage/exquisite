@@ -24,11 +24,13 @@ const ws = new WebSocket(WS_URL);
 export default function App() {
   // console.log(READYSTATES[ws.readyState]);
 
+  const [canvasId, setCanvasId] = useState(null);
   const [canvasIds, setCanvasIds] = useState(null);
   const [lastMessage, setLastMessage] = useState(null);
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback((message) => {
+    console.log("WS sending message", message);
     ws.send(message);
   }, []);
 
@@ -37,12 +39,12 @@ export default function App() {
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "setup": {
-        setCanvasIds(payload.ids);
+        setCanvasId(payload.canvasId);
+        setCanvasIds(payload.canvasIds);
         return;
       }
       case "draw": {
         setLastMessage(payload);
-        console.log("TODO: App wants to draw to a canvas here plz");
         return;
       }
       default: {
@@ -71,17 +73,25 @@ export default function App() {
       {!canvasIds ? (
         "Loading..."
       ) : (
-        <div style={{ display: "flex", flexDirection: "row" }}>
-          {canvasIds.map((id, index) => (
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            flexWrap: "wrap",
+            width: "350px",
+          }}
+        >
+          {canvasIds.map((id) => (
             <Whiteboard
-              isActive={index === 0}
+              isActive={id === canvasId}
               id={id}
-              width={300}
-              height={300}
+              width={100}
+              height={100}
               onEmit={sendWSMessage}
               lineToDraw={
                 lastMessage && lastMessage.id === id ? lastMessage : null
               }
+              key={id}
             />
           ))}
         </div>
