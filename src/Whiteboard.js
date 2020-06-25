@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
+import WhiteboardInfo from "./WhiteboardInfo";
 import styles from "./Whiteboard.module.css";
 
 export default function Whiteboard({
@@ -13,6 +14,7 @@ export default function Whiteboard({
   const [isDrawing, setIsDrawing] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
   const whiteboardRef = useRef(null);
+  const [color, setColor] = useState("black");
 
   const getRelativeCoords = (e) => {
     if (!whiteboardRef.current) return;
@@ -24,7 +26,7 @@ export default function Whiteboard({
   };
 
   const drawLine = useCallback(
-    ({ x1, y1, x2, y2 }) => {
+    ({ x1, y1, x2, y2, color }) => {
       if (!whiteboardRef.current) return;
       const whiteboard = whiteboardRef.current;
       const ctx = whiteboard.getContext("2d");
@@ -33,7 +35,7 @@ export default function Whiteboard({
       );
 
       ctx.beginPath();
-      ctx.strokeStyle = "blue";
+      ctx.strokeStyle = color;
       ctx.lineWidth = 2;
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -42,10 +44,13 @@ export default function Whiteboard({
 
       if (isActive) {
         onEmit(
-          JSON.stringify({ type: "emit draw", payload: { x1, y1, x2, y2, id } })
+          JSON.stringify({
+            type: "emit draw",
+            payload: { x1, y1, x2, y2, id, color },
+          })
         );
       }
-      console.log({ x1, y1, x2, y2 });
+      console.log({ x1, y1, x2, y2, color });
     },
     [onEmit, id, isActive]
   );
@@ -96,11 +101,12 @@ export default function Whiteboard({
           y1: coordinates.y,
           x2: x,
           y2: y,
+          color,
         });
         setCoordinates({ x, y });
       }
     },
-    [isDrawing, coordinates, drawLine]
+    [isDrawing, coordinates, drawLine, color]
   );
 
   useEffect(() => {
@@ -125,7 +131,11 @@ export default function Whiteboard({
         ref={whiteboardRef}
         id={`canvas-${id}`}
       />
-      <div className={styles.info}>{username}</div>
+      <WhiteboardInfo
+        username={username}
+        showColorPicker={isActive}
+        handleChangeColor={setColor}
+      />
     </div>
   );
 }
