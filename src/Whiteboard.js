@@ -1,11 +1,5 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
-// import throttle from "lodash.throttle";
-
-// Is user
-// what is the id
-// lines to draw
-// width / height
-// how to send message
+import styles from "./Whiteboard.module.css";
 
 export default function Whiteboard({
   isActive,
@@ -38,7 +32,7 @@ export default function Whiteboard({
       );
 
       ctx.beginPath();
-      ctx.strokeStyle = "red";
+      ctx.strokeStyle = "blue";
       ctx.lineWidth = 2;
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -119,14 +113,18 @@ export default function Whiteboard({
   }, [draw, isActive]);
 
   return (
-    <div style={{ position: "relative" }}>
+    <div
+      className={`${styles.container} ${
+        styles[isActive ? "active" : "inactive"]
+      }`}
+    >
       <canvas
         width={width}
         height={height}
         ref={whiteboardRef}
         id={`canvas-${id}`}
       />
-      <div style={{ position: "absolute", top: 0, left: 0 }}>
+      <div className={styles.info}>
         {id} {isActive ? "active" : "inactive"}
       </div>
     </div>

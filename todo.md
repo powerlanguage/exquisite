@@ -48,7 +48,16 @@ client
 
 [ ] canvas clears on resize
 [ ] color picker
+[ ] brush size
+[ ] eraser?
 [x] concept of different canvases
-[ ] 9 canvases, same view for every user
+[x] 9 canvases, same view for every user
+[x] move css to modules
+[x] cursor when hovering on other canvases
+[ ] support different size screens
+[ ] login page
+[ ] display names
+[ ] session-ization
+[ ] batch messages per stroke
 [ ] normalization
 [ ] investigate canvas zooming

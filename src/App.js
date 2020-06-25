@@ -1,8 +1,9 @@
 import React, { useEffect, useCallback, useState } from "react";
 // import throttle from "lodash.throttle";
 import Whiteboard from "./Whiteboard";
+import styles from "./App.module.css";
 
-import "./App.css";
+// import "./App.css";
 
 console.log("node env:", process.env.NODE_ENV);
 
@@ -12,6 +13,8 @@ const READYSTATES = {
   2: "CLOSING",
   3: "CLOSED",
 };
+
+const WHITEBOARD_SIZE = 350;
 
 // Can this be set dynamically somehow?
 const WS_URL =
@@ -74,19 +77,15 @@ export default function App() {
         "Loading..."
       ) : (
         <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            flexWrap: "wrap",
-            width: "350px",
-          }}
+          className={styles.whiteboards}
+          style={{ width: `${WHITEBOARD_SIZE * 3}px` }}
         >
           {canvasIds.map((id) => (
             <Whiteboard
               isActive={id === canvasId}
               id={id}
-              width={100}
-              height={100}
+              width={WHITEBOARD_SIZE}
+              height={WHITEBOARD_SIZE}
               onEmit={sendWSMessage}
               lineToDraw={
                 lastMessage && lastMessage.id === id ? lastMessage : null
