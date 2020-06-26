@@ -91,7 +91,7 @@ export default function App() {
         JSON.stringify({ type: "new user", payload: { username } })
       );
     }
-  }, [username]);
+  }, [username, sendWSMessage]);
 
   return (
     <React.Fragment>

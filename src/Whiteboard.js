@@ -56,17 +56,35 @@ export default function Whiteboard({
       }
       // console.log({ x1, y1, x2, y2, color });
     },
-    [onEmit, id, isActive, addToLineBatch]
+    [isActive, addToLineBatch]
   );
 
-  const drawReceivedLineBatch = useCallback((lineBatch) => {
-    if (!lineBatch || lineBatch.length === 0) return;
-    lineBatch.forEach((line, i) =>
-      setTimeout(() => {
-        drawLine(line);
-      }, i * 3)
-    );
-  }, []);
+  const drawReceivedLineBatch = useCallback(
+    (lineBatch) => {
+      if (!lineBatch || lineBatch.length === 0) return;
+      lineBatch.forEach((line, i) =>
+        setTimeout(() => {
+          drawLine(line);
+        }, i * 3)
+      );
+    },
+    [drawLine]
+  );
+
+  const clearWhiteboard = useCallback(() => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    const ctx = whiteboard.getContext("2d");
+    ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+    if (isActive) {
+      onEmit(
+        JSON.stringify({
+          type: "emit clear",
+          payload: { id },
+        })
+      );
+    }
+  }, [onEmit, id, isActive]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -87,7 +105,7 @@ export default function Whiteboard({
         console.log(`[whitboard] unknown action type: ${type}`);
         return;
     }
-  }, [lastMessage]);
+  }, [lastMessage, id, drawReceivedLineBatch, clearWhiteboard]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -118,7 +136,7 @@ export default function Whiteboard({
       setCoordinates(null);
       console.log(e.type);
     },
-    [id, lineBatch]
+    [id, lineBatch, onEmit]
   );
 
   useEffect(() => {
@@ -160,21 +178,6 @@ export default function Whiteboard({
       whiteboard.removeEventListener("mousemove", draw);
     };
   }, [draw, isActive]);
-
-  const clearWhiteboard = useCallback(() => {
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    const ctx = whiteboard.getContext("2d");
-    ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
-    if (isActive) {
-      onEmit(
-        JSON.stringify({
-          type: "emit clear",
-          payload: { id },
-        })
-      );
-    }
-  }, []);
 
   return (
     <div
