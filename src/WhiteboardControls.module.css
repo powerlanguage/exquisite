@@ -18,3 +18,7 @@
   transition: all 100ms ease;
   margin-left: 0;
 }
+
+.button {
+  user-select: none;
+}
