@@ -1,16 +1,18 @@
 .container {
   position: absolute;
   top: 0px;
-  left: 0px;
+  left: 4px;
   display: flex;
   flex-direction: row;
   align-items: center;
+  pointer-events: none;
 }
 
 .username {
   /* TODO this font-size is affecting the height of the containing div */
   font-size: 1rem;
-  pointer-events: none;
   user-select: none;
   padding-left: 4px;
+  color: black;
+  background-color: gray;
 }

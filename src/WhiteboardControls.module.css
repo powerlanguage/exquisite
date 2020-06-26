@@ -1,0 +1,20 @@
+.container {
+  position: absolute;
+  bottom: 4px;
+  left: 0px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.controls {
+  pointer-events: all;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
+
+.clearButton {
+  user-select: none;
+}

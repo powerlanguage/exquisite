@@ -1,5 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import WhiteboardInfo from "./WhiteboardInfo";
+import WhiteboardControls from "./WhiteboardControls";
 import styles from "./Whiteboard.module.css";
 
 export default function Whiteboard({
@@ -72,7 +73,6 @@ export default function Whiteboard({
     const { type, payload } = lastMessage;
     // Confirm this is a message intended for this canvas
     if (payload.id !== id) return;
-
     switch (type) {
       case "draw": {
         if (!payload.lineBatch || payload.lineBatch.length === 0) return;
@@ -188,13 +188,14 @@ export default function Whiteboard({
         ref={whiteboardRef}
         id={`canvas-${id}`}
       />
-      <WhiteboardInfo
-        username={username}
-        showControls={isActive}
-        handleChangeColor={setColor}
-        handleClear={clearWhiteboard}
-        handleChangeBrushSize={setBrushSize}
-      />
+      <WhiteboardInfo username={username} />
+      {isActive && (
+        <WhiteboardControls
+          handleChangeColor={setColor}
+          handleClear={clearWhiteboard}
+          handleChangeBrushSize={setBrushSize}
+        />
+      )}
     </div>
   );
 }
