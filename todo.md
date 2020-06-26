@@ -59,6 +59,8 @@ client
 [x] timeout for drawing batch
 [x] clear canvas button
 [x] style controls better
+[x] try/catch for various socket states
+[ ] add splash screen with basic instructions
 [ ] add a div to wrap canvas overlay elements and set inner padding
 [ ] figure out how to animate menu in and out
 [ ] better fonts/colors
@@ -70,7 +72,6 @@ client
 [ ] toggle control display
 [ ] refactor game logic out of sockets lib
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
-[ ] try/catch for various socket states
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] support different size screens
 [ ] session-ization
