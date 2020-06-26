@@ -8,8 +8,9 @@ export default function Whiteboard({
   username,
   width,
   height,
+  // TODO: rename
   onEmit,
-  linesToDraw,
+  lastMessage,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
@@ -50,7 +51,6 @@ export default function Whiteboard({
       ctx.closePath();
 
       if (isActive) {
-        // TODO: move color and brush to be injected before being sent
         addToLineBatch({ x1, y1, x2, y2, color, brushSize });
       }
       // console.log({ x1, y1, x2, y2, color });
@@ -58,15 +58,36 @@ export default function Whiteboard({
     [onEmit, id, isActive, addToLineBatch]
   );
 
-  useEffect(() => {
-    if (!linesToDraw || linesToDraw.length === 0) return;
-    console.log("canvas component drawing line batch");
-    linesToDraw.forEach((line, i) =>
+  const drawReceivedLineBatch = useCallback((lineBatch) => {
+    if (!lineBatch || lineBatch.length === 0) return;
+    lineBatch.forEach((line, i) =>
       setTimeout(() => {
         drawLine(line);
       }, i * 3)
     );
-  }, [linesToDraw]);
+  }, []);
+
+  useEffect(() => {
+    if (!lastMessage) return;
+    const { type, payload } = lastMessage;
+    // Confirm this is a message intended for this canvas
+    if (payload.id !== id) return;
+
+    switch (type) {
+      case "draw": {
+        if (!payload.lineBatch || payload.lineBatch.length === 0) return;
+        drawReceivedLineBatch(payload.lineBatch);
+        return;
+      }
+      case "clear": {
+        clearWhiteboard();
+        return;
+      }
+      default:
+        console.log(`[whitboard] unknown action type: ${type}`);
+        return;
+    }
+  }, [lastMessage]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -140,6 +161,21 @@ export default function Whiteboard({
     };
   }, [draw, isActive]);
 
+  const clearWhiteboard = useCallback(() => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    const ctx = whiteboard.getContext("2d");
+    ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
+    if (isActive) {
+      onEmit(
+        JSON.stringify({
+          type: "emit clear",
+          payload: { id },
+        })
+      );
+    }
+  }, []);
+
   return (
     <div
       className={`${styles.container} ${
@@ -156,6 +192,7 @@ export default function Whiteboard({
         username={username}
         showControls={isActive}
         handleChangeColor={setColor}
+        handleClear={clearWhiteboard}
         handleChangeBrushSize={setBrushSize}
       />
     </div>

@@ -53,9 +53,10 @@ export default function App() {
         setUsers(payload);
         return;
       }
+      case "clear":
       case "draw": {
         // TODO this word
-        setLastMessage(payload);
+        setLastMessage({ type, payload });
         return;
       }
       case "set game state": {
@@ -124,9 +125,11 @@ export default function App() {
               width={WHITEBOARD_SIZE}
               height={WHITEBOARD_SIZE}
               onEmit={sendWSMessage}
-              linesToDraw={
-                lastMessage && lastMessage.id === user.canvasId
-                  ? lastMessage.lineBatch
+              lastMessage={
+                lastMessage &&
+                lastMessage.payload &&
+                lastMessage.payload.id === user.canvasId
+                  ? lastMessage
                   : null
               }
               key={user.canvasId}

@@ -57,10 +57,11 @@ client
 [x] display names
 [x] refactor sockets out of server
 [x] timeout for drawing batch
+[x] clear canvas button
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
+[ ] rename onEmit
 [ ] update id to canvasId
-[ ] clear canvas button
 [ ] style controls better
 [ ] toggle control display
 [ ] refactor game logic out of sockets lib

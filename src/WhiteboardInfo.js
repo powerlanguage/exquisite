@@ -12,6 +12,7 @@ export default function WhiteboardInfo({
   username,
   handleChangeColor,
   handleChangeBrushSize,
+  handleClear,
   showControls,
 }) {
   const [rawBrushSizeInput, setRawBrushInput] = useState(1);
@@ -36,6 +37,7 @@ export default function WhiteboardInfo({
             value={rawBrushSizeInput}
             onChange={(e) => onChangeBrushSize(e.target.value)}
           />
+          <button onClick={handleClear}>x</button>
         </>
       )}
       <div className={styles.username}>{username}</div>
