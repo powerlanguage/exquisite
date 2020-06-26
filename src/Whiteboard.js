@@ -9,10 +9,11 @@ export default function Whiteboard({
   width,
   height,
   onEmit,
-  lineToDraw,
+  linesToDraw,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   const [coordinates, setCoordinates] = useState(null);
+  const [lineBatch, updateLineBatch] = useState([]);
   const whiteboardRef = useRef(null);
   const [color, setColor] = useState("black");
   const [brushSize, setBrushSize] = useState(3);
@@ -26,14 +27,18 @@ export default function Whiteboard({
     return { x, y };
   };
 
+  const addToLineBatch = useCallback(
+    (lineData) => {
+      updateLineBatch([...lineBatch, lineData]);
+    },
+    [lineBatch]
+  );
+
   const drawLine = useCallback(
     ({ x1, y1, x2, y2, color, brushSize = 1 }) => {
       if (!whiteboardRef.current) return;
       const whiteboard = whiteboardRef.current;
       const ctx = whiteboard.getContext("2d");
-      console.log(
-        `drawing to ${isActive ? "active" : "inactive"} canvas ${id}`
-      );
 
       ctx.beginPath();
       ctx.strokeStyle = color;
@@ -45,22 +50,19 @@ export default function Whiteboard({
       ctx.closePath();
 
       if (isActive) {
-        onEmit(
-          JSON.stringify({
-            type: "emit draw",
-            payload: { x1, y1, x2, y2, id, color, brushSize },
-          })
-        );
+        // TODO: move color and brush to be injected before being sent
+        addToLineBatch({ x1, y1, x2, y2, color, brushSize });
       }
-      console.log({ x1, y1, x2, y2, color });
+      // console.log({ x1, y1, x2, y2, color });
     },
-    [onEmit, id, isActive]
+    [onEmit, id, isActive, addToLineBatch]
   );
 
   useEffect(() => {
-    if (!lineToDraw) return;
-    drawLine(lineToDraw);
-  }, [lineToDraw]);
+    if (!linesToDraw || linesToDraw.length === 0) return;
+    console.log("canvas component drawing line batch");
+    linesToDraw.forEach((line) => drawLine(line));
+  }, [linesToDraw]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -76,11 +78,23 @@ export default function Whiteboard({
     return () => whiteboard.removeEventListener("mousedown", startDrawing);
   }, [startDrawing, isActive]);
 
-  const stopDrawing = useCallback((e) => {
-    setIsDrawing(false);
-    setCoordinates(null);
-    console.log(e.type);
-  }, []);
+  const stopDrawing = useCallback(
+    (e) => {
+      if (lineBatch.length !== 0) {
+        onEmit(
+          JSON.stringify({
+            type: "emit draw",
+            payload: { id, lineBatch },
+          })
+        );
+        updateLineBatch([]);
+      }
+      setIsDrawing(false);
+      setCoordinates(null);
+      console.log(e.type);
+    },
+    [id, lineBatch]
+  );
 
   useEffect(() => {
     if (!isActive) return;

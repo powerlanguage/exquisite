@@ -124,9 +124,9 @@ export default function App() {
               width={WHITEBOARD_SIZE}
               height={WHITEBOARD_SIZE}
               onEmit={sendWSMessage}
-              lineToDraw={
+              linesToDraw={
                 lastMessage && lastMessage.id === user.canvasId
-                  ? lastMessage
+                  ? lastMessage.lineBatch
                   : null
               }
               key={user.canvasId}
