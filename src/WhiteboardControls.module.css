@@ -8,7 +8,11 @@
   pointer-events: none;
 }
 
-.controls {
+.collapsedControls {
+  pointer-events: all;
+}
+
+.expandedControls {
   pointer-events: all;
   display: flex;
   flex-direction: row;

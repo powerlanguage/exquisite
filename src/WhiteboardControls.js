@@ -12,9 +12,10 @@ export default function WhiteboardInfo({
   handleChangeColor,
   handleChangeBrushSize,
   handleClear,
-  showControls,
 }) {
+  // TODO: this should match whatever we're sending by default in Whiteboard
   const [rawBrushSizeInput, setRawBrushInput] = useState(1);
+  const [collapsed, setCollapsed] = useState(false);
 
   const onChangeBrushSize = (rawValue) => {
     setRawBrushInput(rawValue);
@@ -23,22 +24,29 @@ export default function WhiteboardInfo({
 
   return (
     <div className={styles.container}>
-      <div className={styles.controls}>
-        <input
-          type="color"
-          onChange={(e) => handleChangeColor(e.target.value)}
-        />
-        <input
-          type="range"
-          min="1"
-          max="4"
-          value={rawBrushSizeInput}
-          onChange={(e) => onChangeBrushSize(e.target.value)}
-        />
-        <button onClick={handleClear} className={styles.clearButton}>
-          x
-        </button>
-      </div>
+      {collapsed ? (
+        <div className={styles.collapsedControls}>
+          <button onClick={() => setCollapsed(false)}>{`>`}</button>
+        </div>
+      ) : (
+        <div className={styles.expandedControls}>
+          <input
+            type="color"
+            onChange={(e) => handleChangeColor(e.target.value)}
+          />
+          <input
+            type="range"
+            min="1"
+            max="4"
+            value={rawBrushSizeInput}
+            onChange={(e) => onChangeBrushSize(e.target.value)}
+          />
+          <button onClick={handleClear} className={styles.clearButton}>
+            x
+          </button>
+          <button onClick={() => setCollapsed(true)}>{`<`}</button>
+        </div>
+      )}
     </div>
   );
 }

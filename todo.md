@@ -58,11 +58,12 @@ client
 [x] refactor sockets out of server
 [x] timeout for drawing batch
 [x] clear canvas button
+[x] style controls better
+[ ] duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
 [ ] rename onEmit
 [ ] update id to canvasId
-[ ] style controls better
 [ ] toggle control display
 [ ] refactor game logic out of sockets lib
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
