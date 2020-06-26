@@ -61,7 +61,11 @@ export default function Whiteboard({
   useEffect(() => {
     if (!linesToDraw || linesToDraw.length === 0) return;
     console.log("canvas component drawing line batch");
-    linesToDraw.forEach((line) => drawLine(line));
+    linesToDraw.forEach((line, i) =>
+      setTimeout(() => {
+        drawLine(line);
+      }, i * 3)
+    );
   }, [linesToDraw]);
 
   const startDrawing = useCallback((e) => {

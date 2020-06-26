@@ -52,13 +52,19 @@ client
 [x] cursor when hovering on other canvases
 [x] color picker
 [x] brush size
+[x] batch messages per stroke
+[x] login page
+[x] display names
+[x] refactor sockets out of server
+[x] timeout for drawing batch
+[ ] {x1,y1,x2,y2} -> [0,0,0,0],
+[ ] pack in stroke color/size at the same time as id
+[ ] update id to canvasId
 [ ] clear canvas button
 [ ] style controls better
-[ ] refactor sockets out of server
-[ ] hide controls
-[ ] batch messages per stroke
-[ ] login page
-[ ] display names
+[ ] toggle control display
+[ ] refactor game logic out of sockets lib
+[ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] try/catch for various socket states
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] support different size screens
