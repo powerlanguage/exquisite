@@ -82,9 +82,12 @@ client
 [ ] investigate canvas zooming
 [ ] need to think about people joining after things are underway - they only see ink drawn after they joined
 [ ] add some sort of production/dev check for console logs?
+[ ] prune clients that disconnect?
 
 <!-- Playtest 6/26 feedback -->
 
+[x] start button for first user?
+[ ] lowercase names
 [ ] swatch color picker
 [ ] center each player within the global canvas (wrap the canvases)
 [ ] sample cursor position of others to show presence
@@ -93,5 +96,3 @@ client
 [ ] cap batch size. send and reset
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
-[ ] lowercase names
-[ ] start button for first user?

@@ -41,6 +41,8 @@ export default function App() {
     ws.send(message);
   }, []);
 
+  const startGame = () => sendWSMessage(JSON.stringify({ type: "start game" }));
+
   const handleWSMessage = useCallback((message) => {
     // console.log(message);
     const { type, payload } = JSON.parse(message);
@@ -83,7 +85,7 @@ export default function App() {
 
   useEffect(() => {
     if (username) {
-      // Check prevents running on initial render
+      // Username check prevents running on initial render
       sendWSMessage(
         JSON.stringify({ type: "new user", payload: { username } })
       );
@@ -93,11 +95,20 @@ export default function App() {
   return (
     <div className={styles.container}>
       {gameState === GAME_STATE.WAITING ? (
-        <Welcome username={username} setUsername={setUsername} users={users} />
+        <Welcome
+          username={username}
+          setUsername={setUsername}
+          users={users}
+          // TODO: this doesn't feel great. maybe a dedicated helper function? Or a better username -> user map?
+          isOwner={users.some(
+            (user) => user.username === username && user.isOwner
+          )}
+          startGame={startGame}
+        />
       ) : (
         <div
           className={styles.whiteboards}
-          // TODO: figure this out
+          // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
           style={{
             minWidth: `${WHITEBOARD_SIZE * 3}px`,
             maxWidth: `${WHITEBOARD_SIZE * 3}px`,

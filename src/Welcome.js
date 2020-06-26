@@ -3,7 +3,13 @@ import SetUsername from "./SetUsername";
 
 import styles from "./Welcome.module.css";
 
-export default function Welcome({ username, setUsername, users }) {
+export default function Welcome({
+  username,
+  setUsername,
+  users,
+  isOwner,
+  startGame,
+}) {
   return (
     <div className={styles.container}>
       <h1>E X Q U I S I T E</h1>
@@ -24,7 +30,11 @@ export default function Welcome({ username, setUsername, users }) {
                 .map((user) => user.username)
                 .join(", ")}`}
           </p>
-          <p>Waiting for more players to join.</p>
+          {isOwner ? (
+            <button onClick={startGame}>Start</button>
+          ) : (
+            <p>Waiting for more players to join.</p>
+          )}
         </div>
       )}
     </div>
