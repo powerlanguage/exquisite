@@ -94,7 +94,7 @@ export default function App() {
   }, [username, sendWSMessage]);
 
   return (
-    <React.Fragment>
+    <div className={styles.container}>
       {gameState === GAME_STATE.WAITING ? (
         <div>
           <h1>Setting up game</h1>
@@ -137,6 +137,6 @@ export default function App() {
           ))}
         </div>
       )}
-    </React.Fragment>
+    </div>
   );
 }

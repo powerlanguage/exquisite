@@ -4,10 +4,10 @@
 
 .active {
   cursor: crosshair;
-  outline: 1px solid darkgreen;
+  outline: 1px solid var(--green);
 }
 
 .inactive {
   cursor: not-allowed;
-  outline: 1px solid lightgray;
+  outline: 1px solid var(--lightgray);
 }

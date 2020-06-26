@@ -15,6 +15,6 @@
   padding: 4px 8px;
   border-radius: 4px;
   user-select: none;
-  color: white;
-  background-color: #ff4500;
+  color: var(--white);
+  background-color: var(--orangered);
 }

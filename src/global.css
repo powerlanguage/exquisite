@@ -1,0 +1,206 @@
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: "";
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+html {
+  box-sizing: border-box;
+}
+* {
+  box-sizing: inherit;
+}
+
+/* Stolen from Faceplate */
+:root {
+  --green: #6aaa64;
+  --yellow: #c9b458;
+  --orangered: #ff4500;
+  --alienblue: #0079d3;
+  --lightgray: #d8d8d8;
+  --gray: #86888a;
+  --darkGray: #939598;
+  --white: #fff;
+  --black: #212121;
+
+  --font-sans: "IBM Plex Sans", Roboto, "SF Pro Text", Trubuchet MS, sans-serif;
+
+  --font-title-h0: 1.625rem; /* 26px */
+  --font-title-h1: 1.375rem; /* 22px; */
+  --font-title-h2: 1.25rem; /* 20px; */
+  --font-title-h3: 1.125rem; /* 18px */
+  --font-title-h4: 1rem; /* 16px */
+  --font-title-h5: 0.875rem; /* 14px */
+  --font-title-h6: 0.75rem; /* 12px */
+
+  --font-body: 0.875rem;
+  --font-small: 0.75rem;
+
+  font-family: var(--font-sans);
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: 1;
+  padding-top: 0.875rem;
+  font-weight: 500;
+}
+
+h1,
+h2,
+h3 {
+  padding-bottom: 2px;
+  margin-bottom: 8px;
+}
+
+h4,
+h5,
+h6 {
+  margin-bottom: 0.3rem;
+}
+
+h1 {
+  font-size: var(--font-title-h1);
+}
+
+h2 {
+  font-size: var(--font-title-h2);
+}
+
+h3 {
+  font-size: var(--font-title-h3);
+}
+
+h4 {
+  font-size: var(--font-title-h4);
+}
+
+h5 {
+  font-size: var(--font-title-h5);
+}
+
+h6 {
+  font-size: var(--font-title-h6);
+}

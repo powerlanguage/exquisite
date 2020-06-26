@@ -191,7 +191,7 @@ export default function Whiteboard({
         ref={whiteboardRef}
         id={`canvas-${id}`}
       />
-      <WhiteboardInfo username={username} />
+      <WhiteboardInfo username={username} isActive={isActive} />
       {isActive && (
         <WhiteboardControls
           handleChangeColor={setColor}
