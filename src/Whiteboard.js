@@ -3,6 +3,9 @@ import WhiteboardInfo from "./WhiteboardInfo";
 import WhiteboardControls from "./WhiteboardControls";
 import styles from "./Whiteboard.module.css";
 
+// Still gives the impression of the strokes appearing fairly realtime
+const MAX_BATCH_LENGTH = 10;
+
 export default function Whiteboard({
   isActive,
   id,
@@ -85,6 +88,19 @@ export default function Whiteboard({
     }
   }, [sendMessage, id, isActive]);
 
+  const sendLineBatch = useCallback(() => {
+    if (lineBatch.length !== 0) {
+      sendMessage(
+        JSON.stringify({
+          type: "emit draw",
+          payload: { id, lineBatch },
+        })
+      );
+      console.log(`line batch length: ${lineBatch.length}`);
+      updateLineBatch([]);
+    }
+  }, [lineBatch, id]);
+
   useEffect(() => {
     if (!lastMessage) return;
     const { type, payload } = lastMessage;
@@ -122,21 +138,20 @@ export default function Whiteboard({
 
   const stopDrawing = useCallback(
     (e) => {
-      if (lineBatch.length !== 0) {
-        sendMessage(
-          JSON.stringify({
-            type: "emit draw",
-            payload: { id, lineBatch },
-          })
-        );
-        updateLineBatch([]);
-      }
+      sendLineBatch();
       setIsDrawing(false);
       setCoordinates(null);
       console.log(e.type);
     },
     [id, lineBatch, sendMessage]
   );
+
+  // Send the batch when it grows beyond a certain size
+  useEffect(() => {
+    if (lineBatch.length >= MAX_BATCH_LENGTH) {
+      sendLineBatch();
+    }
+  }, [lineBatch]);
 
   useEffect(() => {
     if (!isActive) return;

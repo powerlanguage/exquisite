@@ -96,3 +96,4 @@ client
 [ ] cap batch size. send and reset
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
+[ ] allow people to directly join a game in progress? would require state to be communicated from the server
