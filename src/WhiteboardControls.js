@@ -24,29 +24,25 @@ export default function WhiteboardInfo({
 
   return (
     <div className={styles.container}>
-      {collapsed ? (
-        <div className={styles.collapsedControls}>
-          <button onClick={() => setCollapsed(false)}>{`>`}</button>
-        </div>
-      ) : (
-        <div className={styles.expandedControls}>
-          <input
-            type="color"
-            onChange={(e) => handleChangeColor(e.target.value)}
-          />
-          <input
-            type="range"
-            min="1"
-            max="4"
-            value={rawBrushSizeInput}
-            onChange={(e) => onChangeBrushSize(e.target.value)}
-          />
-          <button onClick={handleClear} className={styles.clearButton}>
-            x
-          </button>
-          <button onClick={() => setCollapsed(true)}>{`<`}</button>
-        </div>
-      )}
+      <div className={`${styles.controls} ${collapsed && styles.collapsed}`}>
+        <input
+          type="color"
+          onChange={(e) => handleChangeColor(e.target.value)}
+        />
+        <input
+          type="range"
+          min="1"
+          max="4"
+          value={rawBrushSizeInput}
+          onChange={(e) => onChangeBrushSize(e.target.value)}
+        />
+        <button onClick={handleClear} className={styles.clearButton}>
+          x
+        </button>
+        <button onClick={() => setCollapsed(!collapsed)}>
+          {collapsed ? `>` : `<`}
+        </button>
+      </div>
     </div>
   );
 }

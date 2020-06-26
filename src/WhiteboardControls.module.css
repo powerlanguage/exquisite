@@ -6,19 +6,16 @@
   display: flex;
   justify-content: center;
   pointer-events: none;
+  overflow: hidden;
 }
 
-.collapsedControls {
-  pointer-events: all;
-}
-
-.expandedControls {
+.controls {
   pointer-events: all;
   display: flex;
   flex-direction: row;
   align-items: center;
 }
 
-.clearButton {
-  user-select: none;
+.collapsed {
+  margin-left: -528px;
 }

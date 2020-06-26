@@ -59,6 +59,9 @@ client
 [x] timeout for drawing batch
 [x] clear canvas button
 [x] style controls better
+[ ] add a div to wrap canvas overlay elements and set inner padding
+[ ] figure out how to animate menu in and out
+[ ] better fonts/colors
 [ ] duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
