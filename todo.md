@@ -64,11 +64,11 @@ client
 [x] better fonts/colors
 [x] figure out how to animate menu in and out
 [x] toggle control display
-[ ] add splash screen with basic instructions
-[ ] duplicate name protection
+[x] add splash screen with basic instructions
+[x] rename onEmit
+[ ] server-side duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
-[ ] rename onEmit
 [ ] update id to canvasId
 [ ] refactor game logic out of sockets lib
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
@@ -81,3 +81,17 @@ client
 [ ] normalization
 [ ] investigate canvas zooming
 [ ] need to think about people joining after things are underway - they only see ink drawn after they joined
+[ ] add some sort of production/dev check for console logs?
+
+<!-- Playtest 6/26 feedback -->
+
+[ ] swatch color picker
+[ ] center each player within the global canvas (wrap the canvases)
+[ ] sample cursor position of others to show presence
+[ ] assign different color to each player, use for cursor
+[ ] store history? allow folks to join later in progress.
+[ ] cap batch size. send and reset
+[ ] show brush size preview below cursor (look)
+[ ] reduce canvas resolution and then scale up (experiment with this)
+[ ] lowercase names
+[ ] start button for first user?

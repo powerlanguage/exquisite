@@ -37,16 +37,16 @@ export default function App() {
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback((message) => {
-    console.log("WS sending message", message);
+    // console.log("WS sending message", message);
     ws.send(message);
   }, []);
 
   const handleWSMessage = useCallback((message) => {
-    console.log(message);
+    // console.log(message);
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "set users": {
-        console.log("setting users", payload);
+        // console.log("setting users", payload);
         setUsers(payload);
         return;
       }
@@ -97,7 +97,11 @@ export default function App() {
       ) : (
         <div
           className={styles.whiteboards}
-          style={{ maxWidth: `${WHITEBOARD_SIZE * 3}px` }}
+          // TODO: figure this out
+          style={{
+            minWidth: `${WHITEBOARD_SIZE * 3}px`,
+            maxWidth: `${WHITEBOARD_SIZE * 3}px`,
+          }}
         >
           {users.map((user) => (
             <Whiteboard
@@ -106,7 +110,7 @@ export default function App() {
               id={user.canvasId}
               width={WHITEBOARD_SIZE}
               height={WHITEBOARD_SIZE}
-              onEmit={sendWSMessage}
+              sendMessage={sendWSMessage}
               lastMessage={
                 lastMessage &&
                 lastMessage.payload &&

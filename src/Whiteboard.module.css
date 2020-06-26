@@ -6,6 +6,8 @@
 .active {
   cursor: crosshair;
   outline: 0.5px solid var(--orangered);
+  /* Make sure the orange outline sits ontop  */
+  z-index: 1;
 }
 
 .inactive {

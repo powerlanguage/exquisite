@@ -9,8 +9,7 @@ export default function Whiteboard({
   username,
   width,
   height,
-  // TODO: rename
-  onEmit,
+  sendMessage,
   lastMessage,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
@@ -77,14 +76,14 @@ export default function Whiteboard({
     const ctx = whiteboard.getContext("2d");
     ctx.clearRect(0, 0, whiteboard.width, whiteboard.height);
     if (isActive) {
-      onEmit(
+      sendMessage(
         JSON.stringify({
           type: "emit clear",
           payload: { id },
         })
       );
     }
-  }, [onEmit, id, isActive]);
+  }, [sendMessage, id, isActive]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -124,7 +123,7 @@ export default function Whiteboard({
   const stopDrawing = useCallback(
     (e) => {
       if (lineBatch.length !== 0) {
-        onEmit(
+        sendMessage(
           JSON.stringify({
             type: "emit draw",
             payload: { id, lineBatch },
@@ -136,7 +135,7 @@ export default function Whiteboard({
       setCoordinates(null);
       console.log(e.type);
     },
-    [id, lineBatch, onEmit]
+    [id, lineBatch, sendMessage]
   );
 
   useEffect(() => {

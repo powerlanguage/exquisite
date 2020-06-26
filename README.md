@@ -21,13 +21,13 @@ Upload the repo to a server and run `yarn start-server`. The react app from `/bu
 Currently `rsync`ing the required files to an ec2 instance:
 
 ```
-rsync -av — progress -e "ssh -i ~/.ssh/aws-key-pair.pem" --exclude '.git' --exclude 'node_modules' ~/code/exquisite/ ubuntu@3.134.88.189:~/exquisite-prototype/
+rsync -av — progress -e "ssh -i ~/.ssh/aws-key-pair.pem" --exclude '.git' --exclude 'node_modules' ~/code/exquisite/ ubuntu@18.191.175.9:~/exquisite-prototype/
 ```
 
 Then `ssh` and start the node server
 
 ```
-ssh -i ~/.ssh/aws-key-pair.pem ubuntu@3.134.88.189 -v
+ssh -i ~/.ssh/aws-key-pair.pem ubuntu@18.191.175.9 -v
 cd exquisite-prototype/
 node server.js
 ```
