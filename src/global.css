@@ -196,6 +196,25 @@ video {
   font-size: 16px;
 }
 
+html,
+input,
+select,
+button {
+  /* Set body font family and some finicky elements */
+  font-family: var(--font-sans);
+}
+
+body {
+  --faceplate-body-padding: 2rem;
+  margin: 0 auto;
+  padding: var(--faceplate-body-padding);
+  border-radius: 6px;
+  overflow-x: hidden;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  line-height: 1.5;
+}
+
 h1,
 h2,
 h3,
