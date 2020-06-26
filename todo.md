@@ -50,6 +50,12 @@ client
 [x] 9 canvases, same view for every user
 [x] move css to modules
 [x] cursor when hovering on other canvases
+[x] color picker
+[x] brush size
+[ ] clear canvas button
+[ ] style controls better
+[ ] refactor sockets out of server
+[ ] hide controls
 [ ] batch messages per stroke
 [ ] login page
 [ ] display names
@@ -59,8 +65,6 @@ client
 [ ] session-ization
 [ ] canvas clears on resize
 [ ] touch controls
-[ ] color picker
-[ ] brush size
 [ ] eraser?
 [ ] normalization
 [ ] investigate canvas zooming

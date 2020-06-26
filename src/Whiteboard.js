@@ -15,6 +15,7 @@ export default function Whiteboard({
   const [coordinates, setCoordinates] = useState(null);
   const whiteboardRef = useRef(null);
   const [color, setColor] = useState("black");
+  const [brushSize, setBrushSize] = useState(3);
 
   const getRelativeCoords = (e) => {
     if (!whiteboardRef.current) return;
@@ -26,7 +27,7 @@ export default function Whiteboard({
   };
 
   const drawLine = useCallback(
-    ({ x1, y1, x2, y2, color }) => {
+    ({ x1, y1, x2, y2, color, brushSize = 1 }) => {
       if (!whiteboardRef.current) return;
       const whiteboard = whiteboardRef.current;
       const ctx = whiteboard.getContext("2d");
@@ -36,7 +37,8 @@ export default function Whiteboard({
 
       ctx.beginPath();
       ctx.strokeStyle = color;
-      ctx.lineWidth = 2;
+      ctx.lineCap = "round";
+      ctx.lineWidth = brushSize;
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
       ctx.stroke();
@@ -46,7 +48,7 @@ export default function Whiteboard({
         onEmit(
           JSON.stringify({
             type: "emit draw",
-            payload: { x1, y1, x2, y2, id, color },
+            payload: { x1, y1, x2, y2, id, color, brushSize },
           })
         );
       }
@@ -102,11 +104,12 @@ export default function Whiteboard({
           x2: x,
           y2: y,
           color,
+          brushSize,
         });
         setCoordinates({ x, y });
       }
     },
-    [isDrawing, coordinates, drawLine, color]
+    [isDrawing, coordinates, drawLine, color, brushSize]
   );
 
   useEffect(() => {
@@ -133,8 +136,9 @@ export default function Whiteboard({
       />
       <WhiteboardInfo
         username={username}
-        showColorPicker={isActive}
+        showControls={isActive}
         handleChangeColor={setColor}
+        handleChangeBrushSize={setBrushSize}
       />
     </div>
   );

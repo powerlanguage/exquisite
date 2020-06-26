@@ -2,15 +2,12 @@
   position: relative;
 }
 
-canvas {
-  outline: 1px solid black;
-}
-
 .active {
   cursor: crosshair;
+  outline: 1px solid lightgray;
 }
 
 .inactive {
   cursor: not-allowed;
-  background: #cecece;
+  outline: 1px solid darkgreen;
 }
