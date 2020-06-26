@@ -97,7 +97,7 @@ export default function App() {
       ) : (
         <div
           className={styles.whiteboards}
-          style={{ width: `${WHITEBOARD_SIZE * 3}px` }}
+          style={{ maxWidth: `${WHITEBOARD_SIZE * 3}px` }}
         >
           {users.map((user) => (
             <Whiteboard

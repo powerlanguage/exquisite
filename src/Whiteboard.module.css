@@ -1,10 +1,11 @@
 .container {
   position: relative;
+  background-color: var(--white);
 }
 
 .active {
   cursor: crosshair;
-  outline: 1px solid var(--green);
+  outline: 0.5px solid var(--orangered);
 }
 
 .inactive {
