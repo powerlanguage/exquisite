@@ -20,19 +20,19 @@ export default function SetUsername({ onSubmit }) {
 
   return (
     <form onSubmit={handleSubmit}>
-      <label>
-        Who are you?
-        <input
-          value={username}
-          onChange={handlePlayerNameChange}
-          autoFocus
-          autoCorrect="off"
-          autoComplete="off"
-          maxLength={NAME_MAX_LENGTH}
-          spellCheck={false}
-        />
-      </label>
-      <button disabled={username.length === 0}>Let's Go!</button>
+      <p>What do you call yourself?</p>
+      <input
+        value={username}
+        onChange={handlePlayerNameChange}
+        autoFocus
+        autoCorrect="off"
+        autoComplete="off"
+        maxLength={NAME_MAX_LENGTH}
+        spellCheck={false}
+      />
+      <div>
+        <button disabled={username.length === 0}>Let's Go!</button>
+      </div>
     </form>
   );
 }

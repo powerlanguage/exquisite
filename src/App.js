@@ -1,11 +1,8 @@
 import React, { useEffect, useCallback, useState } from "react";
-// import throttle from "lodash.throttle";
 import Whiteboard from "./Whiteboard";
+import Welcome from "./Welcome";
+
 import styles from "./App.module.css";
-import SetUsername from "./SetUsername";
-
-// import "./App.css";
-
 console.log("node env:", process.env.NODE_ENV);
 
 const GAME_STATE = {
@@ -96,22 +93,7 @@ export default function App() {
   return (
     <div className={styles.container}>
       {gameState === GAME_STATE.WAITING ? (
-        <div>
-          <h1>Setting up game</h1>
-          {!username ? (
-            <SetUsername onSubmit={setUsername} />
-          ) : (
-            <div>
-              <p>Hello {username}</p>
-              <p>
-                {users &&
-                  `Connected users: ${users
-                    .map((user) => user.username)
-                    .join(", ")}`}
-              </p>
-            </div>
-          )}
-        </div>
+        <Welcome username={username} setUsername={setUsername} users={users} />
       ) : (
         <div
           className={styles.whiteboards}

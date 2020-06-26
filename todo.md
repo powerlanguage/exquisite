@@ -60,16 +60,16 @@ client
 [x] clear canvas button
 [x] style controls better
 [x] try/catch for various socket states
+[x] add a div to wrap canvas overlay elements and set inner padding
+[x] better fonts/colors
+[x] figure out how to animate menu in and out
+[x] toggle control display
 [ ] add splash screen with basic instructions
-[ ] add a div to wrap canvas overlay elements and set inner padding
-[ ] figure out how to animate menu in and out
-[ ] better fonts/colors
 [ ] duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
 [ ] rename onEmit
 [ ] update id to canvasId
-[ ] toggle control display
 [ ] refactor game logic out of sockets lib
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] pass handle functions directly to canvas instead of binding via ref
