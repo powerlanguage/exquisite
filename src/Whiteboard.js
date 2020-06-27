@@ -99,7 +99,7 @@ export default function Whiteboard({
       console.log(`line batch length: ${lineBatch.length}`);
       updateLineBatch([]);
     }
-  }, [lineBatch, id]);
+  }, [lineBatch, id, sendMessage]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -143,7 +143,7 @@ export default function Whiteboard({
       setCoordinates(null);
       console.log(e.type);
     },
-    [id, lineBatch, sendMessage]
+    [sendLineBatch]
   );
 
   // Send the batch when it grows beyond a certain size
@@ -151,7 +151,7 @@ export default function Whiteboard({
     if (lineBatch.length >= MAX_BATCH_LENGTH) {
       sendLineBatch();
     }
-  }, [lineBatch]);
+  }, [lineBatch, sendLineBatch]);
 
   useEffect(() => {
     if (!isActive) return;
