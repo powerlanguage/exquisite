@@ -138,14 +138,14 @@ export default function App() {
               <Whiteboard
                 isActive={user.username === username}
                 username={user.username}
-                id={user.canvasId}
+                whiteboardId={user.whiteboardId}
                 width={WHITEBOARD_SIZE}
                 height={WHITEBOARD_SIZE}
                 sendMessage={sendWSMessage}
                 lastMessage={
                   lastMessage &&
                   lastMessage.payload &&
-                  lastMessage.payload.id === user.canvasId
+                  lastMessage.payload.whiteboardId === user.whiteboardId
                     ? lastMessage
                     : null
                 }

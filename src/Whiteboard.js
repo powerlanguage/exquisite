@@ -8,7 +8,7 @@ const MAX_BATCH_LENGTH = 10;
 
 export default function Whiteboard({
   isActive,
-  id,
+  whiteboardId,
   username,
   width,
   height,
@@ -76,30 +76,30 @@ export default function Whiteboard({
       sendMessage(
         JSON.stringify({
           type: "emit clear",
-          payload: { id },
+          payload: { whiteboardId },
         })
       );
     }
-  }, [sendMessage, id, isActive]);
+  }, [sendMessage, whiteboardId, isActive]);
 
   const sendLineBatch = useCallback(() => {
     if (lineBatch.length !== 0) {
       sendMessage(
         JSON.stringify({
           type: "emit draw",
-          payload: { id, lineBatch, color, brushSize },
+          payload: { whiteboardId, lineBatch, color, brushSize },
         })
       );
       console.log(`line batch length: ${lineBatch.length}`);
       updateLineBatch([]);
     }
-  }, [lineBatch, id, color, brushSize, sendMessage]);
+  }, [lineBatch, whiteboardId, color, brushSize, sendMessage]);
 
   useEffect(() => {
     if (!lastMessage) return;
     const { type, payload } = lastMessage;
     // Confirm this is a message intended for this canvas
-    if (payload.id !== id) return;
+    if (payload.whiteboardId !== whiteboardId) return;
     switch (type) {
       case "draw": {
         if (!payload.lineBatch || payload.lineBatch.length === 0) return;
@@ -118,7 +118,7 @@ export default function Whiteboard({
         console.log(`[whitboard] unknown action type: ${type}`);
         return;
     }
-  }, [lastMessage, id, drawReceivedLineBatch, clearWhiteboard]);
+  }, [lastMessage, whiteboardId, drawReceivedLineBatch, clearWhiteboard]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -210,7 +210,7 @@ export default function Whiteboard({
         width={width}
         height={height}
         ref={whiteboardRef}
-        id={`canvas-${id}`}
+        id={`canvas-${whiteboardId}`}
       />
       <WhiteboardInfo username={username} isActive={isActive} />
       {isActive && (
