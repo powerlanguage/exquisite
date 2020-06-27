@@ -6,9 +6,10 @@ export default function SetUsername({ onSubmit }) {
   const [username, setUsername] = useState("");
 
   const handlePlayerNameChange = (e) => {
+    console.log(e.target.value);
     const newUsername = e.target.value.trim();
 
-    if (newUsername > NAME_MAX_LENGTH) return;
+    if (newUsername.length > NAME_MAX_LENGTH) return;
 
     setUsername(newUsername);
   };

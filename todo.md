@@ -66,6 +66,8 @@ client
 [x] toggle control display
 [x] add splash screen with basic instructions
 [x] rename onEmit
+[x] memoize doesn't appear to actually be memoizing
+[x] setusername trims zeros?
 [ ] server-side duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
@@ -84,8 +86,6 @@ client
 [ ] add some sort of production/dev check for console logs?
 [ ] prune clients that disconnect?
 [ ] experiment with removing delay on draw now that we are batching small strokes as chunks
-[ ] setusername trims zeros?
-[ ] memoize doesn't appear to actually be memoizing
 
 <!-- Playtest 6/26 feedback -->
 

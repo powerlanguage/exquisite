@@ -99,19 +99,18 @@ export default function App() {
 
   // We want to always display the current user in the center of the canvas and
   // re-wrap the other positions around them.
-  const rotateSelfToCenter = useMemo(
-    (users, username) => (users, username) => {
-      console.log("called memoized fn");
-      const [self] = users.filter((user) => user.username === username);
-      const numMissingUsers = MAX_USERS - users.length;
-      const paddedUsers = [...users, ...new Array(numMissingUsers).fill(null)];
-      return shiftValueToCenterAndWrap(paddedUsers, self);
-    },
-    [users, username]
-  );
+  const rotateSelfToCenter = (users, username) => {
+    console.log("called memoized fn");
+    const [self] = users.filter((user) => user.username === username);
+    const numMissingUsers = MAX_USERS - users.length;
+    const paddedUsers = [...users, ...new Array(numMissingUsers).fill(null)];
+    return shiftValueToCenterAndWrap(paddedUsers, self);
+  };
 
-  const rotatedUsers = rotateSelfToCenter(users, username);
-  console.log(rotatedUsers);
+  const rotatedUsers = useMemo(() => {
+    return rotateSelfToCenter(users, username);
+  }, [users, username]);
+
   return (
     <div className={styles.container}>
       {gameState === GAME_STATE.WAITING ? (
@@ -134,7 +133,7 @@ export default function App() {
             maxWidth: `${WHITEBOARD_SIZE * 3}px`,
           }}
         >
-          {rotatedUsers.map((user) =>
+          {rotatedUsers.map((user, index) =>
             !!user ? (
               <Whiteboard
                 isActive={user.username === username}
@@ -150,12 +149,13 @@ export default function App() {
                     ? lastMessage
                     : null
                 }
-                key={user.canvasId}
+                key={index}
               />
             ) : (
               <WhiteboardPlaceholder
                 width={WHITEBOARD_SIZE}
                 height={WHITEBOARD_SIZE}
+                key={index}
               />
             )
           )}
