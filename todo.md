@@ -72,9 +72,10 @@ client
 [x] cap batch size. send and reset
 [x] center each player within the global canvas (wrap the canvases)
 [x] color / brush size in draw operation
+[x] update from range to button brush size picker
+[x] pack in stroke color/size at the same time as id
 [ ] server-side duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
-[ ] pack in stroke color/size at the same time as id
 [ ] update id to canvasId
 [ ] refactor game logic out of sockets lib
 [ ] refactor socket to global context and hook
@@ -92,8 +93,6 @@ client
 [ ] prune clients that disconnect?
 [ ] experiment with removing delay on draw now that we are batching small strokes as chunks
 [ ] rename line to drawOperation
-[ ] update from range to button brush size picker
-[ ][ ] lowercase names
 [ ] swatch color picker
 [ ] sample cursor position of others to show presence
 [ ] assign different color to each player, use for cursor
@@ -101,3 +100,4 @@ client
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] allow people to directly join a game in progress? would require state to be communicated from the server
+[ ] remote canvas components have a bunch of logic that is only used by the local ones

@@ -1,0 +1,14 @@
+.container {
+  display: flex;
+}
+
+.brushPreview {
+  background: var(--black);
+  border-radius: 50%;
+}
+
+button.active {
+}
+
+button.inactive {
+}

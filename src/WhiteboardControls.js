@@ -1,20 +1,12 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./WhiteboardControls.module.css";
-
-const brushSizes = {
-  1: 3,
-  2: 6,
-  3: 12,
-  4: 18,
-};
+import BrushSizePicker from "./BrushSizePicker";
 
 export default function WhiteboardControls({
   handleChangeColor,
   handleChangeBrushSize,
   handleClear,
 }) {
-  // TODO: this should match whatever we're sending by default in Whiteboard
-  const [rawBrushSizeInput, setRawBrushInput] = useState(1);
   const [collapsed, setCollapsed] = useState(false);
   const [collapsedMargin, setCollapsedMargin] = useState(0);
   const controlsRef = useRef(null);
@@ -35,11 +27,6 @@ export default function WhiteboardControls({
     setCollapsedMargin(Math.round(0 - containerOffset - controlsOffset));
   }, []);
 
-  const onChangeBrushSize = (rawValue) => {
-    setRawBrushInput(rawValue);
-    handleChangeBrushSize(brushSizes[rawValue]);
-  };
-
   return (
     <div className={styles.container} ref={containerRef}>
       <div
@@ -51,13 +38,7 @@ export default function WhiteboardControls({
           type="color"
           onChange={(e) => handleChangeColor(e.target.value)}
         />
-        <input
-          type="range"
-          min="1"
-          max="4"
-          value={rawBrushSizeInput}
-          onChange={(e) => onChangeBrushSize(e.target.value)}
-        />
+        <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
         <button onClick={handleClear} className={styles.button}>
           x
         </button>
