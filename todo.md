@@ -68,11 +68,16 @@ client
 [x] rename onEmit
 [x] memoize doesn't appear to actually be memoizing
 [x] setusername trims zeros?
+[x] start button for first user?
+[x] cap batch size. send and reset
+[x] center each player within the global canvas (wrap the canvases)
+[x] color / brush size in draw operation
 [ ] server-side duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] pack in stroke color/size at the same time as id
 [ ] update id to canvasId
 [ ] refactor game logic out of sockets lib
+[ ] refactor socket to global context and hook
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] support different size screens
@@ -86,13 +91,9 @@ client
 [ ] add some sort of production/dev check for console logs?
 [ ] prune clients that disconnect?
 [ ] experiment with removing delay on draw now that we are batching small strokes as chunks
-
-<!-- Playtest 6/26 feedback -->
-
-[x] start button for first user?
-[x] cap batch size. send and reset
-[x] center each player within the global canvas (wrap the canvases)
-[ ] lowercase names
+[ ] rename line to drawOperation
+[ ] update from range to button brush size picker
+[ ][ ] lowercase names
 [ ] swatch color picker
 [ ] sample cursor position of others to show presence
 [ ] assign different color to each player, use for cursor

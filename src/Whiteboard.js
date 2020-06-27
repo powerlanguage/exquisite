@@ -16,6 +16,7 @@ export default function Whiteboard({
   lastMessage,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
+  // TODO: Give this a better name
   const [coordinates, setCoordinates] = useState(null);
   const [lineBatch, updateLineBatch] = useState([]);
   const whiteboardRef = useRef(null);
@@ -38,35 +39,28 @@ export default function Whiteboard({
     [lineBatch]
   );
 
-  const drawLine = useCallback(
-    ({ x1, y1, x2, y2, color, brushSize = 1 }) => {
-      if (!whiteboardRef.current) return;
-      const whiteboard = whiteboardRef.current;
-      const ctx = whiteboard.getContext("2d");
+  // Draw a single line to the canvas. Can be either local or remote.
+  const drawLine = useCallback(({ x1, y1, x2, y2, color, brushSize }) => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    const ctx = whiteboard.getContext("2d");
 
-      ctx.beginPath();
-      ctx.strokeStyle = color;
-      ctx.lineCap = "round";
-      ctx.lineWidth = brushSize;
-      ctx.moveTo(x1, y1);
-      ctx.lineTo(x2, y2);
-      ctx.stroke();
-      ctx.closePath();
-
-      if (isActive) {
-        addToLineBatch({ x1, y1, x2, y2, color, brushSize });
-      }
-      // console.log({ x1, y1, x2, y2, color });
-    },
-    [isActive, addToLineBatch]
-  );
+    ctx.beginPath();
+    ctx.strokeStyle = color;
+    ctx.lineCap = "round";
+    ctx.lineWidth = brushSize;
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+    ctx.closePath();
+  }, []);
 
   const drawReceivedLineBatch = useCallback(
-    (lineBatch) => {
+    (lineBatch, brushSize, color) => {
       if (!lineBatch || lineBatch.length === 0) return;
       lineBatch.forEach((line, i) =>
         setTimeout(() => {
-          drawLine(line);
+          drawLine({ ...line, brushSize, color });
         }, i * 3)
       );
     },
@@ -93,13 +87,13 @@ export default function Whiteboard({
       sendMessage(
         JSON.stringify({
           type: "emit draw",
-          payload: { id, lineBatch },
+          payload: { id, lineBatch, color, brushSize },
         })
       );
       console.log(`line batch length: ${lineBatch.length}`);
       updateLineBatch([]);
     }
-  }, [lineBatch, id, sendMessage]);
+  }, [lineBatch, id, color, brushSize, sendMessage]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -109,7 +103,11 @@ export default function Whiteboard({
     switch (type) {
       case "draw": {
         if (!payload.lineBatch || payload.lineBatch.length === 0) return;
-        drawReceivedLineBatch(payload.lineBatch);
+        drawReceivedLineBatch(
+          payload.lineBatch,
+          payload.brushSize,
+          payload.color
+        );
         return;
       }
       case "clear": {
@@ -165,22 +163,31 @@ export default function Whiteboard({
     };
   }, [stopDrawing, isActive]);
 
+  // TODO: give this a better name. confusing with drawLine
+  // This is only called for local draw events
   const draw = useCallback(
     (e) => {
       if (isDrawing && coordinates) {
         const { x, y } = getRelativeCoords(e);
-        drawLine({
+
+        const lineCoords = {
           x1: coordinates.x,
           y1: coordinates.y,
           x2: x,
           y2: y,
+        };
+
+        drawLine({
+          ...lineCoords,
           color,
           brushSize,
         });
+
+        addToLineBatch(lineCoords);
         setCoordinates({ x, y });
       }
     },
-    [isDrawing, coordinates, drawLine, color, brushSize]
+    [isDrawing, coordinates, drawLine, color, brushSize, addToLineBatch]
   );
 
   useEffect(() => {
