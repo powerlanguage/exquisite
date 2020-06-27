@@ -22,7 +22,10 @@ export default function SetUsername({ onSubmit }) {
   return (
     <form onSubmit={handleSubmit}>
       <p>What do you call yourself?</p>
-      <p>Communication is important so use something people will recognize.</p>
+      <p>
+        Communication is going to be important so use a name people will
+        recognize.
+      </p>
       <input
         value={username}
         onChange={handlePlayerNameChange}
