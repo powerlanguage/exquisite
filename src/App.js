@@ -1,6 +1,9 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, useMemo } from "react";
 import Whiteboard from "./Whiteboard";
+import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import Welcome from "./Welcome";
+
+import { shiftValueToCenterAndWrap } from "./utils/arrayHelpers";
 
 import styles from "./App.module.css";
 console.log("node env:", process.env.NODE_ENV);
@@ -16,6 +19,8 @@ const READYSTATES = {
   2: "CLOSING",
   3: "CLOSED",
 };
+
+const MAX_USERS = 9;
 
 const WHITEBOARD_SIZE = 350;
 
@@ -48,7 +53,7 @@ export default function App() {
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "set users": {
-        // console.log("setting users", payload);
+        console.log("setting users", payload);
         setUsers(payload);
         return;
       }
@@ -92,6 +97,21 @@ export default function App() {
     }
   }, [username, sendWSMessage]);
 
+  // We want to always display the current user in the center of the canvas and
+  // re-wrap the other positions around them.
+  const rotateSelfToCenter = useMemo(
+    (users, username) => (users, username) => {
+      console.log("called memoized fn");
+      const [self] = users.filter((user) => user.username === username);
+      const numMissingUsers = MAX_USERS - users.length;
+      const paddedUsers = [...users, ...new Array(numMissingUsers).fill(null)];
+      return shiftValueToCenterAndWrap(paddedUsers, self);
+    },
+    [users, username]
+  );
+
+  const rotatedUsers = rotateSelfToCenter(users, username);
+  console.log(rotatedUsers);
   return (
     <div className={styles.container}>
       {gameState === GAME_STATE.WAITING ? (
@@ -114,24 +134,31 @@ export default function App() {
             maxWidth: `${WHITEBOARD_SIZE * 3}px`,
           }}
         >
-          {users.map((user) => (
-            <Whiteboard
-              isActive={user.username === username}
-              username={user.username}
-              id={user.canvasId}
-              width={WHITEBOARD_SIZE}
-              height={WHITEBOARD_SIZE}
-              sendMessage={sendWSMessage}
-              lastMessage={
-                lastMessage &&
-                lastMessage.payload &&
-                lastMessage.payload.id === user.canvasId
-                  ? lastMessage
-                  : null
-              }
-              key={user.canvasId}
-            />
-          ))}
+          {rotatedUsers.map((user) =>
+            !!user ? (
+              <Whiteboard
+                isActive={user.username === username}
+                username={user.username}
+                id={user.canvasId}
+                width={WHITEBOARD_SIZE}
+                height={WHITEBOARD_SIZE}
+                sendMessage={sendWSMessage}
+                lastMessage={
+                  lastMessage &&
+                  lastMessage.payload &&
+                  lastMessage.payload.id === user.canvasId
+                    ? lastMessage
+                    : null
+                }
+                key={user.canvasId}
+              />
+            ) : (
+              <WhiteboardPlaceholder
+                width={WHITEBOARD_SIZE}
+                height={WHITEBOARD_SIZE}
+              />
+            )
+          )}
         </div>
       )}
     </div>
