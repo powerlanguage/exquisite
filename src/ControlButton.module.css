@@ -23,21 +23,29 @@
   text-decoration: none;
 
   /* create a small space when buttons wrap on 2 lines */
-  margin: 2px 0;
+  margin: 0;
 
   /* invisible border (will be colored on hover/focus) */
   border: solid 1px transparent;
-  border-radius: 4px;
+  border-radius: 0px;
 
   /* size comes from text & padding (no width/height) */
-  padding: 0.5em 1em;
+  padding: 2px;
 
   /* make sure colors have enough contrast! */
-  color: #ffffff;
-  background-color: #9555af;
+  color: var(--black);
+  background-color: var(--lightgray);
 
   /* We set font-size to 0 in multiple places, not quite sure */
-  font-size: 1rem;
+  font-size: var(--font-small);
+
+  /* YOLO'd as even sizing looks weird with the smaller brush sizes */
+  min-width: 18px;
+
+  /* center errything */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* old-school "down" effect on clic + color tweak */
@@ -46,18 +54,11 @@
   filter: saturate(150%);
 }
 
-/* inverse colors on mouse-over */
-.btn:hover {
-  color: #9555af;
-  border-color: currentColor;
-  background-color: white;
-}
-
 /* inverse colors on mouse-over and focus */
 .btn:hover,
 .btn:focus {
-  color: #9555af;
-  border-color: currentColor;
+  color: var(--black);
+  border-color: var(--black);
   background-color: white;
 }
 

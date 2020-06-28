@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import styles from "./ColorPicker.module.css";
+import ControlButton from "./ControlButton";
 
 // https://github.com/reddit-archive/reddit-plugin-place-opensource/blob/453892c6f0a419f49c86759c60c2bdf64e13354a/reddit_place/public/static/js/place/client.js#L103-L119
 const COLORS = [
@@ -23,12 +24,12 @@ const COLORS = [
 
 function ColorButton({ color, onClick }) {
   return (
-    <button onClick={onClick} className={styles.colorButton}>
+    <ControlButton onClick={onClick}>
       <div
         className={styles.colorPreview}
         style={{ backgroundColor: color }}
       ></div>
-    </button>
+    </ControlButton>
   );
 }
 
@@ -57,6 +58,7 @@ export default function ColorPicker({ onChangeColor, menuCollapsed }) {
               <ColorButton
                 color={color}
                 onClick={() => handleColorClick(color)}
+                key={color}
               />
             ))}
           </div>

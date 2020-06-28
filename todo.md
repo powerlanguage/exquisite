@@ -104,3 +104,4 @@ client
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly
 [ ] tapping mouse doesn't result in paint.
+[ ] split color palette into flex rows

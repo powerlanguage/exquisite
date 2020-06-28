@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import ControlButton from "./ControlButton";
 
 import styles from "./BrushSizePicker.module.css";
 
@@ -20,7 +21,7 @@ export default function BrushSizePicker({ onChangeBrushSize }) {
   return (
     <div className={styles.container}>
       {Object.keys(brushSizes).map((brushSize) => (
-        <button
+        <ControlButton
           key={brushSize}
           onClick={() => handleChangeBrushSize(brushSize)}
         >
@@ -34,7 +35,7 @@ export default function BrushSizePicker({ onChangeBrushSize }) {
               height: brushSizes[brushSize],
             }}
           ></div>
-        </button>
+        </ControlButton>
       ))}
     </div>
   );

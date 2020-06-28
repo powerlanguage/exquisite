@@ -2,10 +2,12 @@ import React from "react";
 
 import styles from "./ControlButton.module.css";
 
-export default function ControlButton({ onClick, children }) {
+const ControlButton = React.forwardRef(({ onClick, children }, ref) => {
   return (
-    <button onClick={onClick} className={styles.btn}>
+    <button onClick={onClick} className={styles.btn} ref={ref}>
       {children}
     </button>
   );
-}
+});
+
+export default ControlButton;

@@ -41,14 +41,13 @@ export default function WhiteboardControls({
           menuCollapsed={collapsed}
         />
         <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
-        <ControlButton onClick={handleClear}>x</ControlButton>
-        <button
+        <ControlButton onClick={handleClear}>clear</ControlButton>
+        <ControlButton
           onClick={() => setCollapsed(!collapsed)}
-          className={styles.button}
           ref={toggleButtonRef}
         >
           {collapsed ? `>` : `<`}
-        </button>
+        </ControlButton>
       </div>
     </div>
   );
