@@ -1,7 +1,4 @@
 .container {
-  position: absolute;
-  bottom: 0px;
-  left: 0px;
   padding: 4px;
   width: 100%;
   display: flex;

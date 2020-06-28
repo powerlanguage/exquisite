@@ -212,14 +212,16 @@ export default function Whiteboard({
         ref={whiteboardRef}
         id={`canvas-${whiteboardId}`}
       />
-      <WhiteboardInfo username={username} isActive={isActive} />
-      {isActive && (
-        <WhiteboardControls
-          handleChangeColor={setColor}
-          handleClear={clearWhiteboard}
-          handleChangeBrushSize={setBrushSize}
-        />
-      )}
+      <div className={styles.overlay}>
+        <WhiteboardInfo username={username} isActive={isActive} />
+        {isActive && (
+          <WhiteboardControls
+            handleChangeColor={setColor}
+            handleClear={clearWhiteboard}
+            handleChangeBrushSize={setBrushSize}
+          />
+        )}
+      </div>
     </div>
   );
 }

@@ -1,0 +1,6 @@
+/* 18 comes from the biggest brush size
+TODO: make brush sizes global? */
+.colorButton {
+  width: 18px;
+  height: 18px;
+}
