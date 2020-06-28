@@ -1,6 +1,23 @@
 /* 18 comes from the biggest brush size
 TODO: make brush sizes global? */
 .colorButton {
-  width: 18px;
-  height: 18px;
+  padding: 2px;
+}
+.colorPreview {
+  width: 16px;
+  height: 16px;
+}
+
+.paletteContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.palette {
+  width: 200px;
 }

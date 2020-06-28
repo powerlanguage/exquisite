@@ -35,7 +35,10 @@ export default function WhiteboardControls({
         style={{ marginLeft: `${collapsed ? collapsedMargin : 0}px` }}
         ref={controlsRef}
       >
-        <ColorPicker onChangeColor={handleChangeColor} />
+        <ColorPicker
+          onChangeColor={handleChangeColor}
+          menuCollapsed={collapsed}
+        />
         <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
         <button onClick={handleClear} className={styles.button}>
           x

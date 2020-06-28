@@ -11,7 +11,7 @@
   pointer-events: all;
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-end;
   transition: all 100ms ease;
   margin-left: 0;
 }
