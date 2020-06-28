@@ -6,6 +6,7 @@ import Welcome from "./Welcome";
 import { shiftValueToCenterAndWrap } from "./utils/arrayHelpers";
 
 import styles from "./App.module.css";
+import { useSocket } from "./contexts/socket";
 console.log("node env:", process.env.NODE_ENV);
 
 const GAME_STATE = {
@@ -24,13 +25,13 @@ const MAX_USERS = 9;
 
 const WHITEBOARD_SIZE = 350;
 
-// Can this be set dynamically somehow?
-const WS_URL =
-  process.env.NODE_ENV === "development"
-    ? "ws://localhost:5000"
-    : window.location.origin.replace(/^http/, "ws");
+// // Can this be set dynamically somehow?
+// const WS_URL =
+//   process.env.NODE_ENV === "development"
+//     ? "ws://localhost:5000"
+//     : window.location.origin.replace(/^http/, "ws");
 
-const ws = new WebSocket(WS_URL);
+// const ws = new WebSocket(WS_URL);
 
 export default function App() {
   // console.log(READYSTATES[ws.readyState]);
@@ -40,11 +41,16 @@ export default function App() {
   const [username, setUsername] = useState("");
   const [gameState, setGameState] = useState(GAME_STATE.WAITING);
 
+  const ws = useSocket();
+
   // Check WS ready state before sending
-  const sendWSMessage = useCallback((message) => {
-    // console.log("WS sending message", message);
-    ws.send(message);
-  }, []);
+  const sendWSMessage = useCallback(
+    (message) => {
+      if (!ws) return;
+      ws.send(message);
+    },
+    [ws]
+  );
 
   const startGame = () => sendWSMessage(JSON.stringify({ type: "start game" }));
 
@@ -75,18 +81,13 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    ws.onopen = () => {
-      console.log("WS connected");
-    };
-    ws.onclose = () => {
-      console.log("WS disconnected");
-    };
+    if (!ws) return;
     ws.onmessage = (event) => {
       console.log("WS message received");
       const message = event.data;
       handleWSMessage(message);
     };
-  }, [handleWSMessage]);
+  }, [handleWSMessage, ws]);
 
   useEffect(() => {
     if (username) {
