@@ -101,3 +101,4 @@ client
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] allow people to directly join a game in progress? would require state to be communicated from the server
 [ ] remote canvas components have a bunch of logic that is only used by the local ones
+[ ] test page

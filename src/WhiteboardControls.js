@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./WhiteboardControls.module.css";
 import BrushSizePicker from "./BrushSizePicker";
+import ColorPicker from "./ColorPicker";
 
 export default function WhiteboardControls({
   handleChangeColor,
@@ -38,6 +39,7 @@ export default function WhiteboardControls({
           type="color"
           onChange={(e) => handleChangeColor(e.target.value)}
         />
+        <ColorPicker onChangeColor={handleChangeColor} />
         <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
         <button onClick={handleClear} className={styles.button}>
           x
