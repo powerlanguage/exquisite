@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import OuterApp from "./OuterApp";
+import App from "./App";
 
 import "./global.css";
 
-ReactDOM.render(<OuterApp />, document.getElementById("root"));
+ReactDOM.render(<App />, document.getElementById("root"));

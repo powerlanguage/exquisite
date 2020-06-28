@@ -105,3 +105,4 @@ client
 [ ] test page for seeing all components quickly
 [ ] tapping mouse doesn't result in paint.
 [ ] split color palette into flex rows
+[ ] need to update server because right now it assumes every connection is also a player

@@ -14,7 +14,7 @@ export default function SocketProvider({ children }) {
 
   useEffect(() => {
     const socket = new WebSocket(WS_URL);
-    console.log("socket", socket);
+    // console.log("socket", socket);
     setSocket(socket); // TODO
   }, []);
 
