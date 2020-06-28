@@ -75,22 +75,22 @@ client
 [x] update from range to button brush size picker
 [x] pack in stroke color/size at the same time as id
 [x] swatch color picker
+[x] update id to canvasId
+[x] reset button styling and add my own
+[x] refactor socket to global context and hook
+[ ] ~canvas clears on resize~
 [ ] server-side duplicate name protection
-[ ] reset button styling and add my own
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
-[ ] update id to canvasId
 [ ] refactor game logic out of sockets lib
-[ ] refactor socket to global context and hook
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] store history? allow folks to join later in progress.
 [ ] allow people to directly join a game in progress? would require state to be communicated from the server
 [ ] support different size screens
 [ ] session-ization
-[ ] canvas clears on resize
 [ ] touch controls
 [ ] eraser?
-[ ] normalization
+[ ] normalization / dynamically fit to screen
 [ ] investigate canvas zooming
 [ ] need to think about people joining after things are underway - they only see ink drawn after they joined
 [ ] add some sort of production/dev check for console logs?
