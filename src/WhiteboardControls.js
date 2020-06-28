@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./WhiteboardControls.module.css";
 import BrushSizePicker from "./BrushSizePicker";
 import ColorPicker from "./ColorPicker";
+import ControlButton from "./ControlButton";
 
 export default function WhiteboardControls({
   handleChangeColor,
@@ -40,9 +41,7 @@ export default function WhiteboardControls({
           menuCollapsed={collapsed}
         />
         <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
-        <button onClick={handleClear} className={styles.button}>
-          x
-        </button>
+        <ControlButton onClick={handleClear}>x</ControlButton>
         <button
           onClick={() => setCollapsed(!collapsed)}
           className={styles.button}

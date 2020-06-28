@@ -36,7 +36,9 @@ export default function SetUsername({ onSubmit }) {
         spellCheck={false}
       />
       <div>
-        <button disabled={username.length === 0}>Let's Go!</button>
+        <button className="btn" disabled={username.length === 0}>
+          Let's Go!
+        </button>
       </div>
     </form>
   );
