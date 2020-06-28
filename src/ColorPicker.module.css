@@ -10,13 +10,14 @@ TODO: make brush sizes global? */
   position: absolute;
   left: 0;
   right: 0;
-  bottom: 30px;
+  bottom: 32px;
   display: flex;
-  flex-wrap: wrap;
   justify-content: center;
 }
 
-/* yolo'd this. doesn't really work for non chrome browsers */
+/* Ideally this would be dynamically determined */
 .palette {
-  width: 200px;
+  width: 192px;
+  display: flex;
+  flex-wrap: wrap;
 }
