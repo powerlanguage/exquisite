@@ -7,8 +7,10 @@
   border-radius: 50%;
 }
 
-button.active {
+.brushPreview.active {
+  opacity: 1;
 }
 
-button.inactive {
+.brushPreview.inactive {
+  opacity: 0.5;
 }

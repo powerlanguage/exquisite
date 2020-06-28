@@ -23,12 +23,12 @@ export default function BrushSizePicker({ onChangeBrushSize }) {
         <button
           key={brushSize}
           onClick={() => handleChangeBrushSize(brushSize)}
-          className={
-            styles[selectedBrush === brushSize ? "active" : "inactive"]
-          }
         >
           <div
-            className={styles.brushPreview}
+            className={`
+              ${styles.brushPreview}
+              ${styles[selectedBrush === brushSize ? "active" : "inactive"]}
+            `}
             style={{
               width: brushSizes[brushSize],
               height: brushSizes[brushSize],
