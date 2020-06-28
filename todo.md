@@ -74,13 +74,17 @@ client
 [x] color / brush size in draw operation
 [x] update from range to button brush size picker
 [x] pack in stroke color/size at the same time as id
+[x] swatch color picker
 [ ] server-side duplicate name protection
+[ ] reset button styling and add my own
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] update id to canvasId
 [ ] refactor game logic out of sockets lib
 [ ] refactor socket to global context and hook
 [ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] pass handle functions directly to canvas instead of binding via ref
+[ ] store history? allow folks to join later in progress.
+[ ] allow people to directly join a game in progress? would require state to be communicated from the server
 [ ] support different size screens
 [ ] session-ization
 [ ] canvas clears on resize
@@ -93,12 +97,9 @@ client
 [ ] prune clients that disconnect?
 [ ] experiment with removing delay on draw now that we are batching small strokes as chunks
 [ ] rename line to drawOperation
-[ ] swatch color picker
 [ ] sample cursor position of others to show presence
 [ ] assign different color to each player, use for cursor
-[ ] store history? allow folks to join later in progress.
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
-[ ] allow people to directly join a game in progress? would require state to be communicated from the server
-[ ] remote canvas components have a bunch of logic that is only used by the local ones
-[ ] test page
+[ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
+[ ] test page for seeing all components quickly
