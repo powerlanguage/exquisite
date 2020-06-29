@@ -51,7 +51,7 @@
 /* old-school "down" effect on clic + color tweak */
 .btn:active {
   transform: translateY(1px);
-  filter: saturate(150%);
+  /* filter: saturate(150%); */
 }
 
 /* inverse colors on mouse-over and focus */

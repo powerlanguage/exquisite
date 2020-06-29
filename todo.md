@@ -36,6 +36,24 @@ When connection is established, does it have an id?
         if not in client list
             add to client list
 
+# Scenarios
+
+- Human enters username who has never played before
+
+  - user is created
+
+    - userId
+    - username
+    - canvasId
+
+  -
+
+- Human refreshes page mid-game
+
+- Human enters name of existing user
+
+- Human returns to play 1 day later
+
 <!-- prettier-ignore -->
 server
     user connects
@@ -106,3 +124,5 @@ client
 [ ] tapping mouse doesn't result in paint.
 [ ] split color palette into flex rows
 [ ] need to update server because right now it assumes every connection is also a player
+[ ] undo
+[ ] confirm before clear

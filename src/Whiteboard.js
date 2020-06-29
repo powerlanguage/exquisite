@@ -61,7 +61,7 @@ export default function Whiteboard({
       lineBatch.forEach((line, i) =>
         setTimeout(() => {
           drawLine({ ...line, brushSize, color });
-        }, i * 3)
+        }, i * 10)
       );
     },
     [drawLine]
