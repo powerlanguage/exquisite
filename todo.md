@@ -38,19 +38,38 @@ When connection is established, does it have an id?
 
 # Scenarios
 
-- Human enters username who has never played before
+- Human sends set username who has never played before
+
+  - no deviceId sent with request // Will there ever be an id sent with req?
+  - no existing username found
 
   - user is created
 
-    - userId
+    - deviceId
     - username
     - canvasId
 
-  -
+  - link socket to deviceId
+
+  - username and canvasId stored in app state
+  - deviceId stored in localStorage
+
+  - Every subsequent request must include deviceId and is checked if matches socket.
 
 - Human refreshes page mid-game
 
+  - device found in localStorage
+  - no username or canvasId
+  - sends request with deviceId
+  - returns username and canvasId
+
+  - remaps socket to deviceId
+
 - Human enters name of existing user
+
+  - receive set username
+
+  -
 
 - Human returns to play 1 day later
 
@@ -96,6 +115,7 @@ client
 [x] update id to canvasId
 [x] reset button styling and add my own
 [x] refactor socket to global context and hook
+[x] experiment with removing delay on draw now that we are batching small strokes as chunks
 [ ] ~canvas clears on resize~
 [ ] server-side duplicate name protection
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
@@ -104,6 +124,7 @@ client
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] store history? allow folks to join later in progress.
 [ ] allow people to directly join a game in progress? would require state to be communicated from the server
+[ ] don't require start if game is in progress
 [ ] support different size screens
 [ ] session-ization
 [ ] touch controls
@@ -113,7 +134,6 @@ client
 [ ] need to think about people joining after things are underway - they only see ink drawn after they joined
 [ ] add some sort of production/dev check for console logs?
 [ ] prune clients that disconnect?
-[ ] experiment with removing delay on draw now that we are batching small strokes as chunks
 [ ] rename line to drawOperation
 [ ] sample cursor position of others to show presence
 [ ] assign different color to each player, use for cursor
