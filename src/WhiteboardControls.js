@@ -46,7 +46,7 @@ export default function WhiteboardControls({
           onClick={() => setCollapsed(!collapsed)}
           ref={toggleButtonRef}
         >
-          {collapsed ? `>` : `<`}
+          {collapsed ? `»` : `«`}
         </ControlButton>
       </div>
     </div>

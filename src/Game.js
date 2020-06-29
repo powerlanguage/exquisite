@@ -22,7 +22,7 @@ const GAME_STATE = {
 
 const MAX_USERS = 9;
 
-const WHITEBOARD_SIZE = 350;
+const WHITEBOARD_SIZE = 275;
 
 // // Can this be set dynamically somehow?
 // const WS_URL =

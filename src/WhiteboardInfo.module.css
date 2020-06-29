@@ -8,7 +8,7 @@
 
 .username {
   /* TODO this font-size is affecting the height of the containing div */
-  font-size: 1rem;
+  font-size: var(--font-small);
   padding: 4px 8px;
   border-radius: 4px;
   user-select: none;
