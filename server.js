@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const path = require("path");
-const { broadcast, socketize, history } = require("./lib/socket");
+const { broadcast, socketize } = require("./lib/socket");
+const { history } = require("./lib/game");
 
 const server = http.createServer(app);
 socketize(server);
