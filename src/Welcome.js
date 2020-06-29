@@ -1,24 +1,27 @@
 import React from "react";
 import SetUsername from "./SetUsername";
 
+import { GAME_STATUS } from "./Game";
+
 import styles from "./Welcome.module.css";
 
 export default function Welcome({
-  username,
   setUsername,
   users,
-  isOwner,
   startGame,
+  joinGame,
+  currentUser,
+  gameStatus,
 }) {
   return (
     <div className={styles.container}>
       <h1>E X Q U I S I T E</h1>
-      {!username ? (
+      {!currentUser.username ? (
         <SetUsername onSubmit={setUsername} />
       ) : (
         <div>
           <p>
-            Hello <strong>{username}</strong>
+            Hello <strong>{currentUser.username}</strong>
           </p>
           <p>
             This is a collaborative experience. You'll need some way of
@@ -30,10 +33,14 @@ export default function Welcome({
                 .map((user) => user.username)
                 .join(", ")}`}
           </p>
-          {isOwner ? (
-            <button onClick={startGame}>Start</button>
+          {gameStatus === GAME_STATUS.WAITING ? (
+            currentUser.isOwner ? (
+              <button onClick={startGame}>Start</button>
+            ) : (
+              <p>Waiting for more players to join.</p>
+            )
           ) : (
-            <p>Waiting for more players to join.</p>
+            <button onClick={joinGame}>Join</button>
           )}
         </div>
       )}
