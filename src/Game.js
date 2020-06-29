@@ -39,6 +39,7 @@ export default function App() {
   const [lastMessage, setLastMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [gameState, setGameState] = useState(GAME_STATE.WAITING);
+  const [whiteboardHistories, setWhiteboardHistories] = useState({});
 
   const ws = useSocket();
 
@@ -54,7 +55,7 @@ export default function App() {
   const startGame = () => sendWSMessage(JSON.stringify({ type: "start game" }));
 
   const handleWSMessage = useCallback((message) => {
-    // console.log(message);
+    console.log(message);
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "set users": {
@@ -68,8 +69,9 @@ export default function App() {
         setLastMessage({ type, payload });
         return;
       }
-      case "set game state": {
-        setGameState(payload);
+      case "start game": {
+        setGameState(payload.gameState);
+        setWhiteboardHistories(payload.history);
         return;
       }
       default: {
@@ -147,6 +149,9 @@ export default function App() {
                   lastMessage.payload.whiteboardId === user.whiteboardId
                     ? lastMessage
                     : null
+                }
+                whiteboardHistory={
+                  whiteboardHistories[user.whiteboardId] || null
                 }
                 key={index}
               />

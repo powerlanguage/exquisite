@@ -14,6 +14,7 @@ export default function Whiteboard({
   height,
   sendMessage,
   lastMessage,
+  whiteboardHistory,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // TODO: Give this a better name
@@ -119,6 +120,18 @@ export default function Whiteboard({
         return;
     }
   }, [lastMessage, whiteboardId, drawReceivedLineBatch, clearWhiteboard]);
+
+  useEffect(() => {
+    if (!whiteboardHistory) return;
+    console.log("drawing whiteboard history...");
+    whiteboardHistory.forEach((drawOperation) => {
+      drawReceivedLineBatch(
+        drawOperation.lineBatch,
+        drawOperation.brushSize,
+        drawOperation.color
+      );
+    });
+  }, [whiteboardHistory]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);

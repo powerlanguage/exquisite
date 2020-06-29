@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const path = require("path");
-const { broadcast, socketize } = require("./lib/socket");
+const { broadcast, socketize, history } = require("./lib/socket");
 
 const server = http.createServer(app);
 socketize(server);
@@ -18,7 +18,14 @@ app.use((req, res, next) => {
 });
 
 app.get("/api/start", (req, res) => {
-  broadcast(JSON.stringify({ type: "set game state", payload: "IN_PROGRESS" }));
+  broadcast(
+    // Importing/passing history here seems gross.
+    // Ideally we do away with this entirely and just have people join when they submit username
+    JSON.stringify({
+      type: "start game",
+      payload: { gameState: "IN_PROGRESS", history },
+    })
+  );
   res.send("starting");
 });
 
