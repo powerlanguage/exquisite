@@ -116,33 +116,35 @@ client
 [x] reset button styling and add my own
 [x] refactor socket to global context and hook
 [x] experiment with removing delay on draw now that we are batching small strokes as chunks
-[ ] ~canvas clears on resize~
-[ ] server-side duplicate name protection
+[x] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
+[x] server-side duplicate name protection
+[x] refactor game logic out of sockets lib
+[x] store history
+[x] session-ization
+[x] update server because right now it assumes every connection is also a player
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
-[ ] refactor game logic out of sockets lib
-[ ] figure out better way for client to handle ws messages. it shouldn't be saying "emit draw" it should be saying "i drew a line"
 [ ] pass handle functions directly to canvas instead of binding via ref
-[ ] store history? allow folks to join later in progress.
-[ ] allow people to directly join a game in progress? would require state to be communicated from the server
+[ ] allow people to directly join a game in progress
+[ ] allow people to reconnect
 [ ] don't require start if game is in progress
 [ ] support different size screens
-[ ] session-ization
 [ ] touch controls
 [ ] eraser?
 [ ] normalization / dynamically fit to screen
 [ ] investigate canvas zooming
-[ ] need to think about people joining after things are underway - they only see ink drawn after they joined
 [ ] add some sort of production/dev check for console logs?
 [ ] prune clients that disconnect?
 [ ] rename line to drawOperation
 [ ] sample cursor position of others to show presence
-[ ] assign different color to each player, use for cursor
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly
 [ ] tapping mouse doesn't result in paint.
 [ ] split color palette into flex rows
-[ ] need to update server because right now it assumes every connection is also a player
 [ ] undo
 [ ] confirm before clear
+[ ] only send history to clients who have just joined
+[ ] don't end drawing on mouseleave
+[ ] ~canvas clears on resize~
+[ ] ~assign different color to each player, use for cursor~

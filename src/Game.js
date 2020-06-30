@@ -27,20 +27,9 @@ export const USER_STATUS = {
 // };
 
 const MAX_USERS = 9;
-
 const WHITEBOARD_SIZE = 275;
 
-// // Can this be set dynamically somehow?
-// const WS_URL =
-//   process.env.NODE_ENV === "development"
-//     ? "ws://localhost:5000"
-//     : window.location.origin.replace(/^http/, "ws");
-
-// const ws = new WebSocket(WS_URL);
-
 export default function Game() {
-  // console.log(READYSTATES[ws.readyState]);
-
   const [users, setUsers] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
   const [username, setUsername] = useState("");
@@ -66,9 +55,10 @@ export default function Game() {
       console.log(message);
       const { type, payload } = JSON.parse(message);
       switch (type) {
-        case "set users": {
+        case "update game": {
           // console.log("setting users", payload);
-          setUsers(payload);
+          setUsers(payload.players);
+          setGameStatus(payload.status);
           return;
         }
         case "clear":
@@ -77,14 +67,10 @@ export default function Game() {
           setLastMessage({ type, payload });
           return;
         }
-        case "set game status": {
-          setGameStatus(payload);
-          return;
-        }
-        case "join game": {
-          setWhiteboardHistories(payload.history);
-          return;
-        }
+        // case "join game": {
+        //   setWhiteboardHistories(payload.history);
+        //   return;
+        // }
         default: {
           console.log("WS Unknown message type received");
           return;
@@ -106,9 +92,7 @@ export default function Game() {
   useEffect(() => {
     if (username) {
       // Username check prevents running on initial render
-      sendWSMessage(
-        JSON.stringify({ type: "new user", payload: { username } })
-      );
+      sendWSMessage(JSON.stringify({ type: "join game", payload: username }));
     }
   }, [username, sendWSMessage]);
 
