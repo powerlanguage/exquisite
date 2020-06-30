@@ -57,13 +57,20 @@ export default function Whiteboard({
   }, []);
 
   const drawReceivedLineBatch = useCallback(
-    (lineBatch, brushSize, color) => {
+    (lineBatch, brushSize, color, delay) => {
       if (!lineBatch || lineBatch.length === 0) return;
-      lineBatch.forEach((line, i) =>
-        setTimeout(() => {
-          drawLine({ ...line, brushSize, color });
-        }, i * 10)
-      );
+      // Do not delay when drawing history as the hard coded timeout can result
+      // in some lines appearing on top of ones they were drawn under. I belive
+      // this is due to lineBatch length not being factored into the timeout delay.
+      if (delay) {
+        lineBatch.forEach((line, i) =>
+          setTimeout(() => {
+            drawLine({ ...line, brushSize, color });
+          }, i * 5)
+        );
+      } else {
+        lineBatch.forEach((line, i) => drawLine({ ...line, brushSize, color }));
+      }
     },
     [drawLine]
   );
@@ -107,7 +114,8 @@ export default function Whiteboard({
         drawReceivedLineBatch(
           payload.lineBatch,
           payload.brushSize,
-          payload.color
+          payload.color,
+          true
         );
         return;
       }
@@ -128,7 +136,8 @@ export default function Whiteboard({
       drawReceivedLineBatch(
         drawOperation.lineBatch,
         drawOperation.brushSize,
-        drawOperation.color
+        drawOperation.color,
+        false
       );
     });
   }, [whiteboardHistory]);
