@@ -9,7 +9,6 @@ export default function Welcome({
   setUsername,
   users,
   startGame,
-  joinGame,
   currentUser,
   gameStatus,
 }) {
@@ -33,15 +32,12 @@ export default function Welcome({
                 .map((user) => user.username)
                 .join(", ")}`}
           </p>
-          {gameStatus === GAME_STATUS.WAITING ? (
-            currentUser.isOwner ? (
+          {gameStatus === GAME_STATUS.WAITING &&
+            (currentUser.isOwner ? (
               <button onClick={startGame}>Start</button>
             ) : (
               <p>Waiting for more players to join.</p>
-            )
-          ) : (
-            <button onClick={joinGame}>Join</button>
-          )}
+            ))}
         </div>
       )}
     </div>

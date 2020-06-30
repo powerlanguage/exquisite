@@ -34,7 +34,7 @@ export default function Game() {
   const [lastMessage, setLastMessage] = useState(null);
   const [username, setUsername] = useState("");
   const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
-  const [whiteboardHistories, setWhiteboardHistories] = useState({});
+  const [whiteboardHistory, setWhiteboardHistory] = useState({});
 
   const ws = useSocket();
 
@@ -47,8 +47,15 @@ export default function Game() {
     [ws]
   );
 
-  const startGame = () => sendWSMessage(JSON.stringify({ type: "start game" }));
-  const joinGame = () => sendWSMessage(JSON.stringify({ type: "join game" }));
+  const startGame = useCallback(
+    () => sendWSMessage(JSON.stringify({ type: "start game" })),
+    [sendWSMessage]
+  );
+  const joinGame = useCallback(
+    () =>
+      sendWSMessage(JSON.stringify({ type: "join game", payload: username })),
+    [sendWSMessage, username]
+  );
 
   const handleWSMessage = useCallback(
     (message) => {
@@ -67,10 +74,10 @@ export default function Game() {
           setLastMessage({ type, payload });
           return;
         }
-        // case "join game": {
-        //   setWhiteboardHistories(payload.history);
-        //   return;
-        // }
+        case "set history": {
+          setWhiteboardHistory(payload);
+          return;
+        }
         default: {
           console.log("WS Unknown message type received");
           return;
@@ -90,14 +97,16 @@ export default function Game() {
   }, [handleWSMessage, ws]);
 
   useEffect(() => {
+    // Username check prevents running on initial render
     if (username) {
-      // Username check prevents running on initial render
-      sendWSMessage(JSON.stringify({ type: "join game", payload: username }));
+      console.log("Join game");
+      joinGame();
     }
-  }, [username, sendWSMessage]);
+  }, [username, joinGame]);
 
   // We want to always display the current user in the center of the canvas and
   // re-wrap the other positions around them.
+  // TODO: move this padding into the server.
   const rotateSelfToCenter = (users, username) => {
     const [self] = users.filter((user) => user.username === username);
     const numMissingUsers = MAX_USERS - users.length;
@@ -116,18 +125,15 @@ export default function Game() {
     return user || {};
   }, [users, username]);
 
-  console.log(currentUser);
-
+  console.log({ currentUser });
   return (
     <div className={styles.container}>
-      {gameStatus === GAME_STATUS.WAITING ||
-      currentUser.status === USER_STATUS.WAITING ? (
+      {gameStatus === GAME_STATUS.WAITING ? (
         <Welcome
           currentUser={currentUser}
           setUsername={setUsername}
           users={users}
           startGame={startGame}
-          joinGame={joinGame}
           gameStatus={gameStatus}
         />
       ) : (
@@ -155,9 +161,7 @@ export default function Game() {
                     ? lastMessage
                     : null
                 }
-                whiteboardHistory={
-                  whiteboardHistories[user.whiteboardId] || null
-                }
+                whiteboardHistory={whiteboardHistory[user.whiteboardId] || null}
                 key={index}
               />
             ) : (
