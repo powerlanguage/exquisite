@@ -61,12 +61,15 @@ export default function Whiteboard({
       if (!lineBatch || lineBatch.length === 0) return;
       // Do not delay when drawing history as the hard coded timeout can result
       // in some lines appearing on top of ones they were drawn under. I belive
-      // this is due to lineBatch length not being factored into the timeout delay.
+      // this is due to lineBatch length not being factored into the timeout
+      // delay. This is not an issue during regular drawing due to the fact we
+      // have a max batch size. Actually, now that I saw that, history should
+      // have a max batch size too so IDK what is up.
       if (delay) {
         lineBatch.forEach((line, i) =>
           setTimeout(() => {
             drawLine({ ...line, brushSize, color });
-          }, i * 5)
+          }, i * 10)
         );
       } else {
         lineBatch.forEach((line, i) => drawLine({ ...line, brushSize, color }));
@@ -148,20 +151,20 @@ export default function Whiteboard({
     console.log(e.type);
   }, []);
 
-  useEffect(() => {
-    if (!isActive) return;
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    whiteboard.addEventListener("mousedown", startDrawing);
-    return () => whiteboard.removeEventListener("mousedown", startDrawing);
-  }, [startDrawing, isActive]);
-
   const stopDrawing = useCallback(
     (e) => {
       sendLineBatch();
       setIsDrawing(false);
       setCoordinates(null);
       console.log(e.type);
+    },
+    [sendLineBatch]
+  );
+
+  const handleMouseLeave = useCallback(
+    (e) => {
+      setCoordinates(getRelativeCoords(e));
+      sendLineBatch();
     },
     [sendLineBatch]
   );
@@ -177,13 +180,15 @@ export default function Whiteboard({
     if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
+    whiteboard.addEventListener("mousedown", startDrawing);
     whiteboard.addEventListener("mouseup", stopDrawing);
-    whiteboard.addEventListener("mouseleave", stopDrawing);
+    whiteboard.addEventListener("mouseleave", handleMouseLeave);
     return () => {
       whiteboard.removeEventListener("mouseup", stopDrawing);
-      whiteboard.removeEventListener("mouseleave", stopDrawing);
+      whiteboard.removeEventListener("mouseleave", handleMouseLeave);
+      whiteboard.removeEventListener("mousedown", startDrawing);
     };
-  }, [stopDrawing, isActive]);
+  }, [startDrawing, stopDrawing, handleMouseLeave, isActive]);
 
   // TODO: give this a better name. confusing with drawLine
   // This is only called for local draw events

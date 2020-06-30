@@ -122,11 +122,15 @@ client
 [x] store history
 [x] session-ization
 [x] update server because right now it assumes every connection is also a player
+[x] only send history to clients who have just joined
+[x] don't end drawing on mouseleave
+[x] allow people to directly join a game in progress
+[x] don't require start if game is in progress
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
+[ ] handle larger canvas
+[ ] should server handle the null clients?
 [ ] pass handle functions directly to canvas instead of binding via ref
-[ ] allow people to directly join a game in progress
 [ ] allow people to reconnect
-[ ] don't require start if game is in progress
 [ ] support different size screens
 [ ] touch controls
 [ ] eraser?
@@ -144,7 +148,5 @@ client
 [ ] split color palette into flex rows
 [ ] undo
 [ ] confirm before clear
-[ ] only send history to clients who have just joined
-[ ] don't end drawing on mouseleave
 [ ] ~canvas clears on resize~
 [ ] ~assign different color to each player, use for cursor~
