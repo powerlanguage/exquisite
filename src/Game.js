@@ -35,6 +35,7 @@ export default function Game() {
   const [username, setUsername] = useState("");
   const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
+  const [currentUser, setCurrentUser] = useState({});
 
   const ws = useSocket();
 
@@ -57,6 +58,8 @@ export default function Game() {
     [sendWSMessage, username]
   );
 
+  console.log({ currentUser });
+
   const handleWSMessage = useCallback(
     (message) => {
       console.log(message);
@@ -66,6 +69,9 @@ export default function Game() {
           // console.log("setting users", payload);
           setUsers(payload.players);
           setGameStatus(payload.status);
+          setCurrentUser(
+            ...payload.players.filter((user) => user.username === username)
+          );
           return;
         }
         case "clear":
@@ -118,14 +124,6 @@ export default function Game() {
     return rotateSelfToCenter(users, username);
   }, [users, username]);
 
-  // Having users only in one place in state means we do not
-  // have to keep them in sync if an attribute changes (e.g. status)
-  const currentUser = useMemo(() => {
-    const [user] = users.filter((user) => user.username === username);
-    return user || {};
-  }, [users, username]);
-
-  console.log({ currentUser });
   return (
     <div className={styles.container}>
       {gameStatus === GAME_STATUS.WAITING ? (
