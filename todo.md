@@ -126,6 +126,7 @@ client
 [x] don't end drawing on mouseleave
 [x] allow people to directly join a game in progress
 [x] don't require start if game is in progress
+[x] tapping mouse doesn't result in paint.
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] handle larger canvas
 [ ] should server handle the null clients?
@@ -144,7 +145,6 @@ client
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly
-[ ] tapping mouse doesn't result in paint.
 [ ] split color palette into flex rows
 [ ] undo
 [ ] confirm before clear

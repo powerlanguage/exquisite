@@ -4,7 +4,6 @@ import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import Welcome from "./Welcome";
 import { useSocket } from "./contexts/socket";
 import { shiftValueToCenterAndWrap } from "./utils/arrayHelpers";
-import { getUserByUsername } from "./utils/userHelpers";
 
 import styles from "./Game.module.css";
 console.log("node env:", process.env.NODE_ENV);
@@ -36,6 +35,7 @@ export default function Game() {
   const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
+  const [playerId, setPlayerId] = useState(null);
 
   const ws = useSocket();
 
@@ -65,12 +65,16 @@ export default function Game() {
       console.log(message);
       const { type, payload } = JSON.parse(message);
       switch (type) {
+        case "set player id": {
+          setPlayerId(payload);
+          return;
+        }
         case "update game": {
           // console.log("setting users", payload);
           setUsers(payload.players);
           setGameStatus(payload.status);
           setCurrentUser(
-            ...payload.players.filter((user) => user.username === username)
+            ...payload.players.filter((user) => user.playerId === playerId)
           );
           return;
         }
@@ -90,7 +94,7 @@ export default function Game() {
         }
       }
     },
-    [username]
+    [playerId]
   );
 
   useEffect(() => {
@@ -105,7 +109,6 @@ export default function Game() {
   useEffect(() => {
     // Username check prevents running on initial render
     if (username) {
-      console.log("Join game");
       joinGame();
     }
   }, [username, joinGame]);
@@ -113,16 +116,18 @@ export default function Game() {
   // We want to always display the current user in the center of the canvas and
   // re-wrap the other positions around them.
   // TODO: move this padding into the server.
-  const rotateSelfToCenter = (users, username) => {
-    const [self] = users.filter((user) => user.username === username);
+  const rotateSelfToCenter = (users, currentUser) => {
+    const [self] = users.filter(
+      (user) => user.playerId === currentUser.playerId
+    );
     const numMissingUsers = MAX_USERS - users.length;
     const paddedUsers = [...users, ...new Array(numMissingUsers).fill(null)];
     return shiftValueToCenterAndWrap(paddedUsers, self);
   };
 
   const rotatedUsers = useMemo(() => {
-    return rotateSelfToCenter(users, username);
-  }, [users, username]);
+    return rotateSelfToCenter(users, currentUser);
+  }, [users, currentUser]); // This is redundant as these are both objects?
 
   return (
     <div className={styles.container}>
@@ -146,7 +151,7 @@ export default function Game() {
           {rotatedUsers.map((user, index) =>
             !!user ? (
               <Whiteboard
-                isActive={user.username === currentUser.username}
+                isActive={user.playerId === playerId}
                 username={user.username}
                 whiteboardId={user.whiteboardId}
                 width={WHITEBOARD_SIZE}

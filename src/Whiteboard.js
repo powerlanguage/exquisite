@@ -56,6 +56,33 @@ export default function Whiteboard({
     ctx.closePath();
   }, []);
 
+  // TODO: give this a better name. confusing with drawLine
+  // This is only called for local draw events
+  const draw = useCallback(
+    (e) => {
+      if (isDrawing && coordinates) {
+        const { x, y } = getRelativeCoords(e);
+
+        const lineCoords = {
+          x1: coordinates.x,
+          y1: coordinates.y,
+          x2: x,
+          y2: y,
+        };
+
+        drawLine({
+          ...lineCoords,
+          color,
+          brushSize,
+        });
+
+        addToLineBatch(lineCoords);
+        setCoordinates({ x, y });
+      }
+    },
+    [isDrawing, coordinates, drawLine, color, brushSize, addToLineBatch]
+  );
+
   const drawReceivedLineBatch = useCallback(
     (lineBatch, brushSize, color, delay) => {
       if (!lineBatch || lineBatch.length === 0) return;
@@ -94,16 +121,18 @@ export default function Whiteboard({
   }, [sendMessage, whiteboardId, isActive]);
 
   const sendLineBatch = useCallback(() => {
-    if (lineBatch.length !== 0) {
-      sendMessage(
-        JSON.stringify({
-          type: "emit draw",
-          payload: { whiteboardId, lineBatch, color, brushSize },
-        })
-      );
-      console.log(`line batch length: ${lineBatch.length}`);
-      updateLineBatch([]);
+    if (lineBatch.length === 0) {
+      console.log("line batch length 0, not sending");
+      return;
     }
+    sendMessage(
+      JSON.stringify({
+        type: "emit draw",
+        payload: { whiteboardId, lineBatch, color, brushSize },
+      })
+    );
+    console.log(`line batch length: ${lineBatch.length}`);
+    updateLineBatch([]);
   }, [lineBatch, whiteboardId, color, brushSize, sendMessage]);
 
   useEffect(() => {
@@ -143,7 +172,7 @@ export default function Whiteboard({
         false
       );
     });
-  }, [whiteboardHistory]);
+  }, [whiteboardHistory, drawReceivedLineBatch]);
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
@@ -153,20 +182,28 @@ export default function Whiteboard({
 
   const stopDrawing = useCallback(
     (e) => {
-      sendLineBatch();
+      draw(e);
       setIsDrawing(false);
       setCoordinates(null);
       console.log(e.type);
     },
-    [sendLineBatch]
+    [sendLineBatch, draw]
+  );
+
+  const handleMouseEnter = useCallback(
+    (e) => {
+      if (e.buttons === 1) {
+        startDrawing(e);
+      }
+    },
+    [startDrawing]
   );
 
   const handleMouseLeave = useCallback(
     (e) => {
-      setCoordinates(getRelativeCoords(e));
-      sendLineBatch();
+      stopDrawing(e);
     },
-    [sendLineBatch]
+    [stopDrawing]
   );
 
   // Send the batch when it grows beyond a certain size
@@ -177,45 +214,26 @@ export default function Whiteboard({
   }, [lineBatch, sendLineBatch]);
 
   useEffect(() => {
+    if (!isDrawing) {
+      sendLineBatch();
+    }
+  }, [isDrawing]);
+
+  useEffect(() => {
     if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     whiteboard.addEventListener("mousedown", startDrawing);
     whiteboard.addEventListener("mouseup", stopDrawing);
+    whiteboard.addEventListener("mouseenter", handleMouseEnter);
     whiteboard.addEventListener("mouseleave", handleMouseLeave);
     return () => {
       whiteboard.removeEventListener("mouseup", stopDrawing);
+      whiteboard.removeEventListener("mouseenter", handleMouseEnter);
       whiteboard.removeEventListener("mouseleave", handleMouseLeave);
       whiteboard.removeEventListener("mousedown", startDrawing);
     };
   }, [startDrawing, stopDrawing, handleMouseLeave, isActive]);
-
-  // TODO: give this a better name. confusing with drawLine
-  // This is only called for local draw events
-  const draw = useCallback(
-    (e) => {
-      if (isDrawing && coordinates) {
-        const { x, y } = getRelativeCoords(e);
-
-        const lineCoords = {
-          x1: coordinates.x,
-          y1: coordinates.y,
-          x2: x,
-          y2: y,
-        };
-
-        drawLine({
-          ...lineCoords,
-          color,
-          brushSize,
-        });
-
-        addToLineBatch(lineCoords);
-        setCoordinates({ x, y });
-      }
-    },
-    [isDrawing, coordinates, drawLine, color, brushSize, addToLineBatch]
-  );
 
   useEffect(() => {
     if (!isActive) return;
