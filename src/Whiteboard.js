@@ -187,7 +187,7 @@ export default function Whiteboard({
       setCoordinates(null);
       console.log(e.type);
     },
-    [sendLineBatch, draw]
+    [draw]
   );
 
   const handleMouseEnter = useCallback(
@@ -217,7 +217,7 @@ export default function Whiteboard({
     if (!isDrawing) {
       sendLineBatch();
     }
-  }, [isDrawing]);
+  }, [isDrawing, sendLineBatch]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -233,7 +233,7 @@ export default function Whiteboard({
       whiteboard.removeEventListener("mouseleave", handleMouseLeave);
       whiteboard.removeEventListener("mousedown", startDrawing);
     };
-  }, [startDrawing, stopDrawing, handleMouseLeave, isActive]);
+  }, [startDrawing, stopDrawing, handleMouseLeave, handleMouseEnter, isActive]);
 
   useEffect(() => {
     if (!isActive) return;
