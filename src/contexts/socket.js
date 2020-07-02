@@ -5,8 +5,6 @@ const WS_URL =
     ? "ws://localhost:5000"
     : window.location.origin.replace(/^http/, "ws");
 
-// const ws =
-
 const SocketContext = React.createContext();
 
 export default function SocketProvider({ children }) {

@@ -4,8 +4,10 @@ import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import Welcome from "./Welcome";
 import { useSocket } from "./contexts/socket";
 import { shiftValueToCenterAndWrap } from "./utils/arrayHelpers";
+import useLocalStorage from "./hooks/useLocalStorage";
 
 import styles from "./Game.module.css";
+
 console.log("node env:", process.env.NODE_ENV);
 
 export const GAME_STATUS = {
@@ -18,12 +20,12 @@ export const USER_STATUS = {
   PLAYING: "PLAYING",
 };
 
-// const READYSTATES = {
-//   0: "CONNECTING",
-//   1: "OPEN",
-//   2: "CLOSING",
-//   3: "CLOSED",
-// };
+const READYSTATES = {
+  CONNECTING: 0,
+  OPEN: 1,
+  CLOSING: 2,
+  CLOSED: 3,
+};
 
 const MAX_USERS = 9;
 const WHITEBOARD_SIZE = 275;
@@ -36,13 +38,19 @@ export default function Game() {
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [playerId, setPlayerId] = useState(null);
-
+  const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
   const ws = useSocket();
+
+  // Store this in a nullable value so we can use as a dep in useEffect
+  const socketReadyState = ws ? ws.readyState : null;
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback(
     (message) => {
-      if (!ws) return;
+      if (!ws || ws.readyState !== ws.OPEN) {
+        console.log("WS cant send message, socket not ready", message);
+        return;
+      }
       ws.send(message);
     },
     [ws]
@@ -57,8 +65,16 @@ export default function Game() {
       sendWSMessage(JSON.stringify({ type: "join game", payload: username })),
     [sendWSMessage, username]
   );
-
-  console.log({ currentUser });
+  const attemptReconnect = useCallback(() => {
+    if (!localStorage.whiteboardId) return;
+    console.log("attempting reconnect");
+    sendWSMessage(
+      JSON.stringify({
+        type: "attempt reconnect",
+        payload: localStorage.whiteboardId,
+      })
+    );
+  }, [sendWSMessage, localStorage]);
 
   const handleWSMessage = useCallback(
     (message) => {
@@ -113,6 +129,20 @@ export default function Game() {
     }
   }, [username, joinGame]);
 
+  // Update local storage to reflect currentUser
+  useEffect(() => {
+    if (!currentUser.whiteboardId) return;
+    if (currentUser.whiteboardId === localStorage.whiteboardId) return;
+    setLocalStorage({ whiteboardId: currentUser.whiteboardId });
+  }, [currentUser.whiteboardId, localStorage.whiteboardId]);
+
+  // Attempt reconnect if we find local storage value
+  useEffect(() => {
+    if (socketReadyState === READYSTATES.OPEN && localStorage.whiteboardId) {
+      attemptReconnect();
+    }
+  }, [socketReadyState, localStorage.whiteboardId, attemptReconnect]);
+
   // We want to always display the current user in the center of the canvas and
   // re-wrap the other positions around them.
   // TODO: move this padding into the server.
@@ -128,6 +158,10 @@ export default function Game() {
   const rotatedUsers = useMemo(() => {
     return rotateSelfToCenter(users, currentUser);
   }, [users, currentUser]); // This is redundant as these are both objects?
+
+  if (reconnecting) {
+    return <div>reconnecting...</div>;
+  }
 
   return (
     <div className={styles.container}>

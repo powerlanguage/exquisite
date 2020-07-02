@@ -127,24 +127,25 @@ client
 [x] allow people to directly join a game in progress
 [x] don't require start if game is in progress
 [x] tapping mouse doesn't result in paint.
+[x] allow people to reconnect
+[x] prune clients that disconnect?
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] handle larger canvas
 [ ] should server handle the null clients?
 [ ] pass handle functions directly to canvas instead of binding via ref
-[ ] allow people to reconnect
 [ ] support different size screens
 [ ] touch controls
 [ ] eraser?
 [ ] normalization / dynamically fit to screen
 [ ] investigate canvas zooming
 [ ] add some sort of production/dev check for console logs?
-[ ] prune clients that disconnect?
 [ ] rename line to drawOperation
 [ ] sample cursor position of others to show presence
 [ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly
+[ ] need a loading state while checking if reconnection is working
 [ ] split color palette into flex rows
 [ ] undo
 [ ] confirm before clear
