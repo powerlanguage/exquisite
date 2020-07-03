@@ -89,9 +89,7 @@ export default function Game() {
           // console.log("setting users", payload);
           setUsers(payload.players);
           setGameStatus(payload.status);
-          setCurrentUser(
-            ...payload.players.filter((user) => user.playerId === playerId)
-          );
+          setCurrentUser(payload.currentPlayer);
           return;
         }
         case "clear":
@@ -138,7 +136,10 @@ export default function Game() {
 
   // Attempt reconnect if we find local storage value
   useEffect(() => {
-    if (socketReadyState === READYSTATES.OPEN && localStorage.whiteboardId) {
+    if (
+      socketReadyState === READYSTATES.OPEN &&
+      currentUser.whiteboardId !== localStorage.whiteboardId
+    ) {
       attemptReconnect();
     }
   }, [socketReadyState, localStorage.whiteboardId, attemptReconnect]);
@@ -158,10 +159,6 @@ export default function Game() {
   const rotatedUsers = useMemo(() => {
     return rotateSelfToCenter(users, currentUser);
   }, [users, currentUser]); // This is redundant as these are both objects?
-
-  if (reconnecting) {
-    return <div>reconnecting...</div>;
-  }
 
   return (
     <div className={styles.container}>
