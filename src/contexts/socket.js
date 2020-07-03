@@ -9,20 +9,23 @@ const SocketContext = React.createContext();
 
 export default function SocketProvider({ children }) {
   const [socket, setSocket] = useState(null);
+  const [readyState, setReadyState] = useState(null);
 
   useEffect(() => {
     const socket = new WebSocket(WS_URL);
-    // console.log("socket", socket);
     setSocket(socket); // TODO
+    setReadyState(socket.readyState);
   }, []);
 
   useEffect(() => {
     if (!socket) return;
     socket.onopen = () => {
       console.log("WS connected");
+      setReadyState(socket.readyState);
     };
     socket.onclose = () => {
       console.log("WS disconnected");
+      setReadyState(socket.readyState);
     };
     return () => {
       console.log("WS closing socket...");
@@ -31,7 +34,9 @@ export default function SocketProvider({ children }) {
   }, [socket]);
 
   return (
-    <SocketContext.Provider value={socket}>{children}</SocketContext.Provider>
+    <SocketContext.Provider value={[socket, readyState]}>
+      {children}
+    </SocketContext.Provider>
   );
 }
 

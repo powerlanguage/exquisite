@@ -37,10 +37,7 @@ export default function Game() {
   const [currentUser, setCurrentUser] = useState({});
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
   const [neighborhood, setNeighborhood] = useState([]);
-  const ws = useSocket();
-
-  // Store this in a nullable value so we can use as a dep in useEffect
-  const socketReadyState = ws ? ws.readyState : null;
+  const [ws, socketReadyState] = useSocket();
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback(
