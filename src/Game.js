@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback, useState, useMemo } from "react";
+import React, { useEffect, useCallback, useState } from "react";
 import Whiteboard from "./Whiteboard";
 import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import Welcome from "./Welcome";
@@ -26,7 +26,6 @@ const READYSTATES = {
   CLOSED: 3,
 };
 
-const MAX_USERS = 9;
 const WHITEBOARD_SIZE = 275;
 
 export default function Game() {
@@ -36,7 +35,6 @@ export default function Game() {
   const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
-  const [playerId, setPlayerId] = useState(null);
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
   const [neighborhood, setNeighborhood] = useState([]);
   const ws = useSocket();
@@ -76,46 +74,41 @@ export default function Game() {
     );
   }, [sendWSMessage, localStorage]);
 
-  const handleWSMessage = useCallback(
-    (message) => {
-      console.log(message);
-      const { type, payload } = JSON.parse(message);
-      switch (type) {
-        case "set player id": {
-          setPlayerId(payload);
-          return;
-        }
-        case "update game": {
-          // console.log("setting users", payload);
-          setUsers(payload.players);
-          setGameStatus(payload.status);
-          return;
-        }
-        case "set current player": {
-          setCurrentUser(payload);
-          return;
-        }
-        case "set neighborhood": {
-          setNeighborhood(payload);
-        }
-        case "clear":
-        case "draw": {
-          // TODO this word
-          setLastMessage({ type, payload });
-          return;
-        }
-        case "set history": {
-          setWhiteboardHistory(payload);
-          return;
-        }
-        default: {
-          console.log("WS Unknown message type received");
-          return;
-        }
+  const handleWSMessage = useCallback((message) => {
+    console.log(message);
+    const { type, payload } = JSON.parse(message);
+    switch (type) {
+      case "update game": {
+        // console.log("setting users", payload);
+        setUsers(payload.players);
+        setGameStatus(payload.status);
+        return;
       }
-    },
-    [playerId]
-  );
+      case "set current player": {
+        setCurrentUser(payload);
+        return;
+      }
+      case "set neighborhood": {
+        console.log("setting neighborhood", payload);
+        setNeighborhood(payload);
+        return;
+      }
+      case "clear":
+      case "draw": {
+        // TODO this word
+        setLastMessage({ type, payload });
+        return;
+      }
+      case "set history": {
+        setWhiteboardHistory(payload);
+        return;
+      }
+      default: {
+        console.log("WS Unknown message type received");
+        return;
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!ws) return;
@@ -148,7 +141,12 @@ export default function Game() {
     ) {
       attemptReconnect();
     }
-  }, [socketReadyState, localStorage.whiteboardId, attemptReconnect]);
+  }, [
+    socketReadyState,
+    localStorage.whiteboardId,
+    attemptReconnect,
+    currentUser.whiteboardId,
+  ]);
 
   return (
     <div className={styles.container}>
@@ -172,7 +170,7 @@ export default function Game() {
           {neighborhood.map((user, index) =>
             !!user ? (
               <Whiteboard
-                isActive={user.playerId === playerId}
+                isActive={user.playerId === currentUser.playerId}
                 username={user.username}
                 whiteboardId={user.whiteboardId}
                 width={WHITEBOARD_SIZE}
