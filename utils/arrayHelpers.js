@@ -106,7 +106,7 @@ function calculateShiftToCenter(arr, centerCoords, currentCoords) {
 
 // Given a 1d array and value, return a 1d array that can be mapped to a
 // 2d array with value at the center with element wrapping
-export function shiftValueToCenterAndWrap(arr, value) {
+function shiftValueToCenterAndWrap(arr, value) {
   const arr2d = convert1dTo2dArray(arr);
   const center = getCenterCoordsOf1dArray(arr);
   const target = getCoords(arr2d, value);
@@ -114,3 +114,7 @@ export function shiftValueToCenterAndWrap(arr, value) {
   const shifted = shift2dArray(arr2d, x, y);
   return convert2dTo1dArray(shifted);
 }
+
+module.exports = {
+  shiftValueToCenterAndWrap,
+};

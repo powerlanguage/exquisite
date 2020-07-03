@@ -3,7 +3,6 @@ import Whiteboard from "./Whiteboard";
 import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import Welcome from "./Welcome";
 import { useSocket } from "./contexts/socket";
-import { shiftValueToCenterAndWrap } from "./utils/arrayHelpers";
 import useLocalStorage from "./hooks/useLocalStorage";
 
 import styles from "./Game.module.css";
@@ -39,6 +38,7 @@ export default function Game() {
   const [currentUser, setCurrentUser] = useState({});
   const [playerId, setPlayerId] = useState(null);
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
+  const [neighborhood, setNeighborhood] = useState([]);
   const ws = useSocket();
 
   // Store this in a nullable value so we can use as a dep in useEffect
@@ -89,8 +89,14 @@ export default function Game() {
           // console.log("setting users", payload);
           setUsers(payload.players);
           setGameStatus(payload.status);
-          setCurrentUser(payload.currentPlayer);
           return;
+        }
+        case "set current player": {
+          setCurrentUser(payload);
+          return;
+        }
+        case "set neighborhood": {
+          setNeighborhood(payload);
         }
         case "clear":
         case "draw": {
@@ -144,22 +150,6 @@ export default function Game() {
     }
   }, [socketReadyState, localStorage.whiteboardId, attemptReconnect]);
 
-  // We want to always display the current user in the center of the canvas and
-  // re-wrap the other positions around them.
-  // TODO: move this padding into the server.
-  const rotateSelfToCenter = (users, currentUser) => {
-    const [self] = users.filter(
-      (user) => user.playerId === currentUser.playerId
-    );
-    const numMissingUsers = MAX_USERS - users.length;
-    const paddedUsers = [...users, ...new Array(numMissingUsers).fill(null)];
-    return shiftValueToCenterAndWrap(paddedUsers, self);
-  };
-
-  const rotatedUsers = useMemo(() => {
-    return rotateSelfToCenter(users, currentUser);
-  }, [users, currentUser]); // This is redundant as these are both objects?
-
   return (
     <div className={styles.container}>
       {gameStatus === GAME_STATUS.WAITING ? (
@@ -179,7 +169,7 @@ export default function Game() {
             maxWidth: `${WHITEBOARD_SIZE * 3}px`,
           }}
         >
-          {rotatedUsers.map((user, index) =>
+          {neighborhood.map((user, index) =>
             !!user ? (
               <Whiteboard
                 isActive={user.playerId === playerId}

@@ -149,5 +149,10 @@ client
 [ ] split color palette into flex rows
 [ ] undo
 [ ] confirm before clear
+[ ] we are duplicating user information in a lot of places in react state. this comes from the server so it is not the end of the world but feels like everything should be playerIds with one spot to do lookups.
+[ ] players that reconnect when app is waiting for others are not reconnected with their account
+
+<!-- OLD -->
+
 [ ] ~canvas clears on resize~
 [ ] ~assign different color to each player, use for cursor~
