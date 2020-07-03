@@ -24,6 +24,10 @@ export default function SocketProvider({ children }) {
     socket.onclose = () => {
       console.log("WS disconnected");
     };
+    return () => {
+      console.log("WS closing socket...");
+      socket.close();
+    };
   }, [socket]);
 
   return (
