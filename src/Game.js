@@ -132,16 +132,16 @@ export default function Game() {
   }, [currentUser.whiteboardId, localStorage.whiteboardId]);
 
   // Attempt reconnect if we find local storage value
-  // useEffect(() => {
-  //   console.log("UE recon");
-  //   console.log(socketReadyState);
-  //   if (
-  //     socketReadyState === READYSTATES.OPEN &&
-  //     currentUser.whiteboardId !== localStorage.whiteboardId
-  //   ) {
-  //     attemptReconnect();
-  //   }
-  // }, [socketReadyState, localStorage.whiteboardId, attemptReconnect, ws]);
+  useEffect(() => {
+    console.log("UE recon");
+    console.log(socketReadyState);
+    if (
+      socketReadyState === READYSTATES.OPEN &&
+      currentUser.whiteboardId !== localStorage.whiteboardId
+    ) {
+      attemptReconnect();
+    }
+  }, [socketReadyState, localStorage.whiteboardId, attemptReconnect, ws]);
 
   return (
     <div className={styles.container}>
