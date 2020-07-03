@@ -116,6 +116,7 @@ export default function Game() {
     };
   }, [handleWSMessage, ws]);
 
+  // TODO no longer need to store this locally, can just send up
   useEffect(() => {
     // Username check prevents running on initial render
     if (username) {
@@ -132,18 +133,15 @@ export default function Game() {
 
   // Attempt reconnect if we find local storage value
   useEffect(() => {
+    console.log("UE recon");
+    console.log(socketReadyState);
     if (
       socketReadyState === READYSTATES.OPEN &&
       currentUser.whiteboardId !== localStorage.whiteboardId
     ) {
       attemptReconnect();
     }
-  }, [
-    socketReadyState,
-    localStorage.whiteboardId,
-    attemptReconnect,
-    currentUser.whiteboardId,
-  ]);
+  }, [socketReadyState, localStorage.whiteboardId, attemptReconnect, ws]);
 
   return (
     <div className={styles.container}>

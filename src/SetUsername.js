@@ -13,6 +13,8 @@ export default function SetUsername({ onSubmit }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    // TODO: can this component handle sending the socket message? No need to
+    // pass down the onSubmit fn
     onSubmit(username);
   };
 
