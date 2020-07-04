@@ -11,6 +11,7 @@ export default function Welcome({
   startGame,
   currentUser,
   gameStatus,
+  maxPlayers,
 }) {
   return (
     <div className={styles.container}>
@@ -26,12 +27,14 @@ export default function Welcome({
             This is a collaborative experience. You'll need some way of
             communicating with your fellow players (e.g. Slack).
           </p>
-          <p>
-            {users &&
-              `Connected users: ${users
-                .map((user) => user.username)
-                .join(", ")}`}
-          </p>
+          {users && (
+            <React.Fragment>
+              <p>
+                Connected users: {users.map((user) => user.username).join(", ")}
+              </p>
+              <p>{`${users.length}/${maxPlayers}`}</p>
+            </React.Fragment>
+          )}
           {gameStatus === GAME_STATUS.WAITING &&
             (currentUser.isOwner ? (
               <button onClick={startGame}>Start</button>

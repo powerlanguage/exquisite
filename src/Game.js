@@ -32,6 +32,7 @@ export default function Game() {
   const [users, setUsers] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
   const [username, setUsername] = useState("");
+  const [maxPlayers, setMaxPlayers] = useState(0);
   const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
@@ -79,6 +80,7 @@ export default function Game() {
         // console.log("setting users", payload);
         setUsers(payload.playersSummary);
         setGameStatus(payload.status);
+        setMaxPlayers(payload.maxPlayers);
         return;
       }
       case "set current player": {
@@ -152,6 +154,7 @@ export default function Game() {
           users={users}
           startGame={startGame}
           gameStatus={gameStatus}
+          maxPlayers={maxPlayers}
         />
       ) : (
         <div
