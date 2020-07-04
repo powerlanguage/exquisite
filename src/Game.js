@@ -77,7 +77,7 @@ export default function Game() {
     switch (type) {
       case "update game": {
         // console.log("setting users", payload);
-        setUsers(payload.players);
+        setUsers(payload.playersSummary);
         setGameStatus(payload.status);
         return;
       }
