@@ -250,7 +250,7 @@ export default function Whiteboard({
       className={`
         ${styles.container}
         ${styles[isActive ? "active" : "inactive"]}
-        ${styles[`brushSize-${brushSize}`]}
+        ${styles[isActive ? `brushSize-${brushSize}` : ""]}
       `}
     >
       <canvas
