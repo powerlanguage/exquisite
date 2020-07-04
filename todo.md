@@ -129,6 +129,7 @@ client
 [x] tapping mouse doesn't result in paint.
 [x] allow people to reconnect
 [x] prune clients that disconnect?
+[x] show brush size preview below cursor (look)
 [ ] {x1,y1,x2,y2} -> [0,0,0,0],
 [ ] handle larger canvas
 [ ] should server handle the null clients?
@@ -141,7 +142,6 @@ client
 [ ] add some sort of production/dev check for console logs?
 [ ] rename line to drawOperation
 [ ] sample cursor position of others to show presence
-[ ] show brush size preview below cursor (look)
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly

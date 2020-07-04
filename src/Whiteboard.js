@@ -247,9 +247,11 @@ export default function Whiteboard({
 
   return (
     <div
-      className={`${styles.container} ${
-        styles[isActive ? "active" : "inactive"]
-      }`}
+      className={`
+        ${styles.container}
+        ${styles[isActive ? "active" : "inactive"]}
+        ${styles[`brushSize-${brushSize}`]}
+      `}
     >
       <canvas
         width={width}

@@ -15,6 +15,30 @@
   outline: 1px solid var(--lightgray);
 }
 
+.brushSize-3 {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='4' width='4'%3E%3Ccircle cx='2' cy='2' r='2' stroke='white' stroke-width='0.25' fill='black' /%3E%3C/svg%3E%0A")
+      2 2,
+    crosshair;
+}
+
+.brushSize-6 {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='6' width='6'%3E%3Ccircle cx='3' cy='3' r='3' stroke='white' stroke-width='0.25' fill='black' /%3E%3C/svg%3E%0A")
+      3 3,
+    crosshair;
+}
+
+.brushSize-12 {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='12' width='12'%3E%3Ccircle cx='6' cy='6' r='6' stroke='white' stroke-width='0.5' fill='black' /%3E%3C/svg%3E%0A")
+      6 6,
+    crosshair;
+}
+
+.brushSize-18 {
+  cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' height='18' width='18'%3E%3Ccircle cx='9' cy='9' r='9' stroke='white' stroke-width='0.5' fill='black' /%3E%3C/svg%3E%0A")
+      9 9,
+    crosshair;
+}
+
 .overlay {
   position: absolute;
   top: 0;
