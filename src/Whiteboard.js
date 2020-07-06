@@ -50,7 +50,7 @@ export default function Whiteboard({
     ctx.strokeStyle = color;
     ctx.lineCap = "round";
     ctx.lineWidth = brushSize;
-    ctx.moveTo(x1, y1);
+    ctx.moveTo(x1, y1); // Move to is like lifting pen off paper
     ctx.lineTo(x2, y2);
     ctx.stroke();
     ctx.closePath();
