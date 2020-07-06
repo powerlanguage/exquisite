@@ -165,31 +165,35 @@ export default function Game() {
             maxWidth: `${WHITEBOARD_SIZE * 3}px`,
           }}
         >
-          {neighborhood.map((user, index) =>
-            !!user ? (
-              <Whiteboard
-                isActive={user.playerId === currentUser.playerId}
-                username={user.username}
-                whiteboardId={user.whiteboardId}
-                width={WHITEBOARD_SIZE}
-                height={WHITEBOARD_SIZE}
-                sendMessage={sendWSMessage}
-                lastMessage={
-                  lastMessage &&
-                  lastMessage.payload &&
-                  lastMessage.payload.whiteboardId === user.whiteboardId
-                    ? lastMessage
-                    : null
-                }
-                whiteboardHistory={whiteboardHistory[user.whiteboardId] || null}
-                key={index}
-              />
-            ) : (
-              <WhiteboardPlaceholder
-                width={WHITEBOARD_SIZE}
-                height={WHITEBOARD_SIZE}
-                key={index}
-              />
+          {neighborhood.map((row, i) =>
+            row.map((user, j) =>
+              !!user ? (
+                <Whiteboard
+                  isActive={user.playerId === currentUser.playerId}
+                  username={user.username}
+                  whiteboardId={user.whiteboardId}
+                  width={WHITEBOARD_SIZE}
+                  height={WHITEBOARD_SIZE}
+                  sendMessage={sendWSMessage}
+                  lastMessage={
+                    lastMessage &&
+                    lastMessage.payload &&
+                    lastMessage.payload.whiteboardId === user.whiteboardId
+                      ? lastMessage
+                      : null
+                  }
+                  whiteboardHistory={
+                    whiteboardHistory[user.whiteboardId] || null
+                  }
+                  key={`${i}${j}`}
+                />
+              ) : (
+                <WhiteboardPlaceholder
+                  width={WHITEBOARD_SIZE}
+                  height={WHITEBOARD_SIZE}
+                  key={`${i}${j}`}
+                />
+              )
             )
           )}
         </div>
