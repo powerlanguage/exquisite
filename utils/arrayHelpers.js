@@ -140,7 +140,7 @@ function getNeighborsByIndex(arr, col, row, wrap = true) {
       if (_col < 0) {
         _col = wrap ? width - 1 : null;
       }
-      if (col >= width) {
+      if (_col >= width) {
         _col = wrap ? 0 : null;
       }
 
