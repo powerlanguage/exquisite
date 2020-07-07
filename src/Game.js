@@ -12,6 +12,7 @@ console.log("node env:", process.env.NODE_ENV);
 export const GAME_STATUS = {
   WAITING: "WAITING",
   IN_PROGRESS: "IN_PROGRESS",
+  FINISHED: "FINISHED",
 };
 
 export const USER_STATUS = {
@@ -126,7 +127,9 @@ export default function Game() {
     }
   }, [username, joinGame]);
 
-  // Update local storage to reflect currentUser
+  // Update local storage to reflect currentUser.
+  // intentionally not including setLocalStorage in deps. Hook needs to be
+  // updated with useCallback.
   useEffect(() => {
     if (!currentUser.whiteboardId) return;
     if (currentUser.whiteboardId === localStorage.whiteboardId) return;
@@ -148,59 +151,72 @@ export default function Game() {
     currentUser.whiteboardId,
   ]);
 
-  return (
-    <div className={styles.container}>
-      {gameStatus === GAME_STATUS.WAITING ? (
-        <Welcome
-          currentUser={currentUser}
-          setUsername={setUsername}
-          users={users}
-          startGame={startGame}
-          gameStatus={gameStatus}
-          maxPlayers={maxPlayers}
-        />
-      ) : (
-        <div
-          className={styles.whiteboards}
-          // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
-          style={{
-            minWidth: `${WHITEBOARD_SIZE * 3}px`,
-            maxWidth: `${WHITEBOARD_SIZE * 3}px`,
-          }}
-        >
-          {neighborhood.map((row, i) =>
-            row.map((user, j) =>
-              !!user ? (
-                <Whiteboard
-                  isActive={user.playerId === currentUser.playerId}
-                  username={user.username}
-                  whiteboardId={user.whiteboardId}
-                  width={WHITEBOARD_SIZE}
-                  height={WHITEBOARD_SIZE}
-                  sendMessage={sendWSMessage}
-                  lastMessage={
-                    lastMessage &&
-                    lastMessage.payload &&
-                    lastMessage.payload.whiteboardId === user.whiteboardId
-                      ? lastMessage
-                      : null
-                  }
-                  whiteboardHistory={
-                    whiteboardHistory[user.whiteboardId] || null
-                  }
-                  key={`${i}${j}`}
-                />
-              ) : (
-                <WhiteboardPlaceholder
-                  width={WHITEBOARD_SIZE}
-                  height={WHITEBOARD_SIZE}
-                  key={`${i}${j}`}
-                />
+  const renderContent = () => {
+    switch (gameStatus) {
+      case GAME_STATUS.WAITING: {
+        return (
+          <Welcome
+            currentUser={currentUser}
+            setUsername={setUsername}
+            users={users}
+            startGame={startGame}
+            gameStatus={gameStatus}
+            maxPlayers={maxPlayers}
+          />
+        );
+      }
+      case GAME_STATUS.IN_PROGRESS: {
+        return (
+          <div
+            className={styles.whiteboards}
+            // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
+            style={{
+              minWidth: `${WHITEBOARD_SIZE * 3}px`,
+              maxWidth: `${WHITEBOARD_SIZE * 3}px`,
+            }}
+          >
+            {neighborhood.map((row, i) =>
+              row.map((user, j) =>
+                !!user ? (
+                  <Whiteboard
+                    isActive={user.playerId === currentUser.playerId}
+                    username={user.username}
+                    whiteboardId={user.whiteboardId}
+                    width={WHITEBOARD_SIZE}
+                    height={WHITEBOARD_SIZE}
+                    sendMessage={sendWSMessage}
+                    lastMessage={
+                      lastMessage &&
+                      lastMessage.payload &&
+                      lastMessage.payload.whiteboardId === user.whiteboardId
+                        ? lastMessage
+                        : null
+                    }
+                    whiteboardHistory={
+                      whiteboardHistory[user.whiteboardId] || null
+                    }
+                    key={`${i}${j}`}
+                  />
+                ) : (
+                  <WhiteboardPlaceholder
+                    width={WHITEBOARD_SIZE}
+                    height={WHITEBOARD_SIZE}
+                    key={`${i}${j}`}
+                  />
+                )
               )
-            )
-          )}
-        </div>
-      )}
-    </div>
-  );
+            )}
+          </div>
+        );
+      }
+      case GAME_STATUS.FINISHED: {
+        return <h1>Finished</h1>;
+      }
+      default: {
+        return <h1>Unsupported game state</h1>;
+      }
+    }
+  };
+
+  return <div className={styles.container}>{renderContent()}</div>;
 }
