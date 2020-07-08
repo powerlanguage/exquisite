@@ -4,7 +4,7 @@ import WhiteboardControls from "./WhiteboardControls";
 import styles from "./Whiteboard.module.css";
 
 // Still gives the impression of the strokes appearing fairly realtime
-const MAX_BATCH_LENGTH = 10;
+const MAX_BATCH_LENGTH = 20;
 
 export default function Whiteboard({
   isActive,
