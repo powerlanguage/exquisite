@@ -43,3 +43,21 @@ TODO:
 - typscript support?
 - disconnections / reconnections
 - error handling
+
+```
+line = [x1, y1, x2, y2 ]
+
+drawOperation = { lines: [line], color, brushSize }
+
+drawOperations = [drawOperation]
+
+history: [whiteboardId]: drawOperations;
+
+drawOperations are independent of lines.
+
+lines are used to draw to the local canvas
+
+when lines hits a certain limit, we package them into a draw operation and send them off
+
+
+```
