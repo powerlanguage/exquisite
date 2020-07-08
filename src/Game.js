@@ -30,16 +30,18 @@ const READYSTATES = {
 export const WHITEBOARD_SIZE = 275;
 
 export default function Game() {
-  const [users, setUsers] = useState([]);
   const [lastMessage, setLastMessage] = useState(null);
   const [username, setUsername] = useState("");
-  const [maxPlayers, setMaxPlayers] = useState(0);
-  const [gameStatus, setGameStatus] = useState(GAME_STATUS.WAITING);
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
   const [neighborhood, setNeighborhood] = useState([]);
-  const [finishedState, setFinishedState] = useState([[]]);
+  const [gameState, setGameState] = useState({
+    users: null,
+    gameStatus: GAME_STATUS.WAITING,
+    maxPlayers: 0,
+    finishedState: [[]],
+  });
   const [ws, socketReadyState] = useSocket();
 
   // Check WS ready state before sending
@@ -79,12 +81,12 @@ export default function Game() {
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "update game": {
-        // console.log("setting users", payload);
-        setUsers(payload.playersSummary);
-        setGameStatus(payload.status);
-        setMaxPlayers(payload.maxPlayers);
-        setFinishedState(payload.finishedState || [[]]);
-
+        setGameState({
+          users: payload.playersSummary,
+          gameStatus: payload.status,
+          maxPlayers: payload.maxPlayers,
+          finishedState: payload.finishedState,
+        });
         return;
       }
       case "set current player": {
@@ -153,6 +155,8 @@ export default function Game() {
     attemptReconnect,
     currentUser.whiteboardId,
   ]);
+
+  const { gameStatus, users, maxPlayers, finishedState } = gameState;
 
   return (
     <div className={styles.container}>
