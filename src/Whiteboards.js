@@ -18,8 +18,8 @@ export default function Whiteboards({
       className={styles.whiteboards}
       // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
       style={{
-        minWidth: `${WHITEBOARD_SIZE * playerGrid.length}px`,
-        maxWidth: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
+        height: `${WHITEBOARD_SIZE * playerGrid.length}px`,
+        width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
       }}
     >
       {playerGrid.map((row, i) =>

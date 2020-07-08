@@ -5,6 +5,6 @@
   /* required to remove spacing between individual whiteboards */
   font-size: 0;
   outline: 1px solid var(--lightgray);
-  /* background-color: var(--lightgray); */
-  background-color: #ff0000;
+  /* We hardcode the width of this div via JS. This centers it */
+  margin: 0 auto;
 }
