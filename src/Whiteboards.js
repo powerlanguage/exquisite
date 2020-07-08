@@ -48,7 +48,7 @@ export default function Whiteboards({
                   ? whiteboardHistories[player.whiteboardId] || null
                   : player.history
               }
-              showBorder={GAME_STATUS.IN_PROGRESS}
+              showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
               key={`${i}${j}`}
             />
           ) : (
