@@ -153,6 +153,7 @@ client
 [ ] players that reconnect when app is waiting for others are not reconnected with their account
 [ ] could we just set a game state obj?
 [ ] handle what should happen when others attempt to join and game is full
+[ ] put people in the 2d players array based on the max number of neighbors possible
 
 <!-- OLD -->
 

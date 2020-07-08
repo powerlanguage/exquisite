@@ -1,7 +1,7 @@
 import React, { useEffect, useCallback, useState } from "react";
-import Whiteboard from "./Whiteboard";
-import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
+
 import Welcome from "./Welcome";
+import Whiteboards from "./Whiteboards";
 import { useSocket } from "./contexts/socket";
 import useLocalStorage from "./hooks/useLocalStorage";
 
@@ -27,7 +27,7 @@ const READYSTATES = {
   CLOSED: 3,
 };
 
-const WHITEBOARD_SIZE = 275;
+export const WHITEBOARD_SIZE = 275;
 
 export default function Game() {
   const [users, setUsers] = useState([]);
@@ -39,6 +39,7 @@ export default function Game() {
   const [currentUser, setCurrentUser] = useState({});
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
   const [neighborhood, setNeighborhood] = useState([]);
+  const [finishedState, setFinishedState] = useState([[]]);
   const [ws, socketReadyState] = useSocket();
 
   // Check WS ready state before sending
@@ -82,6 +83,8 @@ export default function Game() {
         setUsers(payload.playersSummary);
         setGameStatus(payload.status);
         setMaxPlayers(payload.maxPlayers);
+        setFinishedState(payload.finishedState || [[]]);
+
         return;
       }
       case "set current player": {
@@ -151,72 +154,32 @@ export default function Game() {
     currentUser.whiteboardId,
   ]);
 
-  const renderContent = () => {
-    switch (gameStatus) {
-      case GAME_STATUS.WAITING: {
-        return (
-          <Welcome
-            currentUser={currentUser}
-            setUsername={setUsername}
-            users={users}
-            startGame={startGame}
-            gameStatus={gameStatus}
-            maxPlayers={maxPlayers}
-          />
-        );
-      }
-      case GAME_STATUS.IN_PROGRESS: {
-        return (
-          <div
-            className={styles.whiteboards}
-            // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
-            style={{
-              minWidth: `${WHITEBOARD_SIZE * 3}px`,
-              maxWidth: `${WHITEBOARD_SIZE * 3}px`,
-            }}
-          >
-            {neighborhood.map((row, i) =>
-              row.map((user, j) =>
-                !!user ? (
-                  <Whiteboard
-                    isActive={user.playerId === currentUser.playerId}
-                    username={user.username}
-                    whiteboardId={user.whiteboardId}
-                    width={WHITEBOARD_SIZE}
-                    height={WHITEBOARD_SIZE}
-                    sendMessage={sendWSMessage}
-                    lastMessage={
-                      lastMessage &&
-                      lastMessage.payload &&
-                      lastMessage.payload.whiteboardId === user.whiteboardId
-                        ? lastMessage
-                        : null
-                    }
-                    whiteboardHistory={
-                      whiteboardHistory[user.whiteboardId] || null
-                    }
-                    key={`${i}${j}`}
-                  />
-                ) : (
-                  <WhiteboardPlaceholder
-                    width={WHITEBOARD_SIZE}
-                    height={WHITEBOARD_SIZE}
-                    key={`${i}${j}`}
-                  />
-                )
-              )
-            )}
-          </div>
-        );
-      }
-      case GAME_STATUS.FINISHED: {
-        return <h1>Finished</h1>;
-      }
-      default: {
-        return <h1>Unsupported game state</h1>;
-      }
-    }
-  };
-
-  return <div className={styles.container}>{renderContent()}</div>;
+  return (
+    <div className={styles.container}>
+      {gameStatus === GAME_STATUS.WAITING ? (
+        <Welcome
+          currentUser={currentUser}
+          setUsername={setUsername}
+          users={users}
+          startGame={startGame}
+          gameStatus={gameStatus}
+          maxPlayers={maxPlayers}
+        />
+      ) : (
+        <Whiteboards
+          playerGrid={
+            gameStatus === GAME_STATUS.IN_PROGRESS
+              ? neighborhood
+              : finishedState
+          }
+          sendWSMessage={sendWSMessage}
+          lastMessage={lastMessage}
+          currentUser={currentUser}
+          gameStatus={gameStatus}
+          // TODO rename this in local state to be plural
+          whiteboardHistories={whiteboardHistory}
+        />
+      )}
+    </div>
+  );
 }

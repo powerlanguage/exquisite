@@ -15,6 +15,7 @@ export default function Whiteboard({
   sendMessage,
   lastMessage,
   whiteboardHistory,
+  showBorder,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // TODO: Give this a better name
@@ -246,11 +247,13 @@ export default function Whiteboard({
   }, [draw, isActive]);
 
   return (
+    // TODO: figure out how to not render undefined when no brushSize present
     <div
       className={`
         ${styles.container}
+        ${styles[showBorder ? "border" : "noborder"]}
         ${styles[isActive ? "active" : "inactive"]}
-        ${styles[isActive ? `brushSize-${brushSize}` : ""]}
+        ${styles[isActive ? `brushSize-${brushSize}` : ""]} 
       `}
     >
       <canvas

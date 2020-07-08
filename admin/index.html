@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <button id="finish">Finish</button>
+    <button id="reset">Reset</button>
+    <script>
+      document.getElementById("finish").addEventListener("click", function () {
+        fetch("/api/finish");
+      });
+    </script>
+    <script>
+      document.getElementById("reset").addEventListener("click", function () {
+        fetch("/api/reset");
+      });
+    </script>
+  </body>
+</html>

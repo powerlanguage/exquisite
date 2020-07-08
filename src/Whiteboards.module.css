@@ -1,0 +1,9 @@
+.whiteboards {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  /* required to remove spacing between individual whiteboards */
+  font-size: 0;
+  outline: 1px solid var(--lightgray);
+  background-color: var(--lightgray);
+}

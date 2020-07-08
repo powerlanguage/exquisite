@@ -5,13 +5,19 @@
 
 .active {
   cursor: crosshair;
+}
+
+.inactive {
+  cursor: not-allowed;
+}
+
+.active.border {
   outline: 0.5px solid var(--orangered);
   /* Make sure the orange outline sits ontop  */
   z-index: 1;
 }
 
-.inactive {
-  cursor: not-allowed;
+.inactive.border {
   outline: 1px solid var(--lightgray);
 }
 

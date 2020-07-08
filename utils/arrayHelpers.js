@@ -163,6 +163,7 @@ function getNeighborsFromPlayers(players, item, wrap) {
 }
 
 module.exports = {
+  convert1dTo2dArray,
   shiftValueToCenterAndWrap,
   getNeighborsFromPlayers,
 };
