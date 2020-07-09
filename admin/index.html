@@ -6,17 +6,23 @@
     <title>Document</title>
   </head>
   <body>
+    <h1 id="bytes"></h1>
     <button id="finish">Finish</button>
     <button id="reset">Reset</button>
     <script>
       document.getElementById("finish").addEventListener("click", function () {
         fetch("/api/finish");
       });
-    </script>
-    <script>
+
       document.getElementById("reset").addEventListener("click", function () {
         fetch("/api/reset");
       });
+
+      const bytes = document.getElementById("bytes");
+
+      fetch("/api/bytes")
+        .then((data) => data.json())
+        .then((res) => (bytes.innerText = res));
     </script>
   </body>
 </html>

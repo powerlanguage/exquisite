@@ -2,7 +2,8 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const path = require("path");
-const { broadcastGameUpdate, socketize } = require("./lib/socket");
+const { broadcastGameUpdate, socketize, getBytes } = require("./lib/socket");
+const { prettykBs } = require("./utils/byteSizeHelpers");
 const { startGame, finishGame, resetGame } = require("./lib/game");
 
 const server = http.createServer(app);
@@ -28,6 +29,15 @@ app.get("/api/finish", (req, res) => {
   finishGame();
   broadcastGameUpdate();
   res.send("finishing");
+});
+
+app.get("/api/bytes", (req, res) => {
+  const [sent, received] = getBytes();
+  res.send(
+    JSON.stringify(
+      `total sent: ${prettykBs(sent)}kB received: ${prettykBs(received)}kB`
+    )
+  );
 });
 
 app.get("/admin", (req, res) => {
