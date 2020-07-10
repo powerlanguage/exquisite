@@ -32,10 +32,12 @@ app.get("/api/finish", (req, res) => {
 });
 
 app.get("/api/bytes", (req, res) => {
-  const [sent, received] = getBytes();
+  const [sent, received, averageSent] = getBytes();
   res.send(
     JSON.stringify(
-      `total sent: ${prettykBs(sent)}kB received: ${prettykBs(received)}kB`
+      `total sent: ${prettykBs(sent)}kB av sent/player: ${prettykBs(
+        averageSent
+      )}kB total received: ${prettykBs(received)}kB`
     )
   );
 });
