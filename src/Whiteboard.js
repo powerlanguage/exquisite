@@ -33,8 +33,8 @@ export default function Whiteboard({
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     const { left, top } = whiteboard.getBoundingClientRect();
-    const x = e.clientX - left;
-    const y = e.clientY - top;
+    const x = Math.floor(e.clientX - left);
+    const y = Math.floor(e.clientY - top);
     return { x, y };
   };
 
@@ -95,6 +95,11 @@ export default function Whiteboard({
     (e) => {
       if (isDrawing && coordinates) {
         const { x, y } = getRelativeCoords(e);
+
+        if (x === coordinates.x && y === coordinates.y) {
+          // Mouse hasn't moved. don't draw (was causing us to over-send WS messages)
+          return;
+        }
 
         const lineCoords = [coordinates.x, coordinates.y, x, y];
 
