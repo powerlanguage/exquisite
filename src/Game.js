@@ -31,7 +31,6 @@ export const WHITEBOARD_SIZE = 275;
 
 export default function Game() {
   const [lastMessage, setLastMessage] = useState(null);
-  const [username, setUsername] = useState("");
   const [whiteboardHistory, setWhiteboardHistory] = useState({});
   const [currentUser, setCurrentUser] = useState({});
   const [localStorage, setLocalStorage] = useLocalStorage("exquisite", {});
@@ -61,9 +60,9 @@ export default function Game() {
     [sendWSMessage]
   );
   const joinGame = useCallback(
-    () =>
+    (username) =>
       sendWSMessage(JSON.stringify({ type: "join game", payload: username })),
-    [sendWSMessage, username]
+    [sendWSMessage]
   );
   const attemptReconnect = useCallback(() => {
     if (!localStorage.whiteboardId) return;
@@ -124,14 +123,6 @@ export default function Game() {
     };
   }, [handleWSMessage, ws]);
 
-  // TODO no longer need to store this locally, can just send up
-  useEffect(() => {
-    // Username check prevents running on initial render
-    if (username) {
-      joinGame();
-    }
-  }, [username, joinGame]);
-
   // Update local storage to reflect currentUser.
   // intentionally not including setLocalStorage in deps. Hook needs to be
   // updated with useCallback.
@@ -163,7 +154,7 @@ export default function Game() {
       {gameStatus === GAME_STATUS.WAITING ? (
         <Welcome
           currentUser={currentUser}
-          setUsername={setUsername}
+          joinGame={joinGame}
           users={users}
           startGame={startGame}
           gameStatus={gameStatus}

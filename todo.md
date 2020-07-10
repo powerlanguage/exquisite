@@ -130,7 +130,10 @@ client
 [x] allow people to reconnect
 [x] prune clients that disconnect?
 [x] show brush size preview below cursor (look)
-[ ] {x1,y1,x2,y2} -> [0,0,0,0],
+[x] {x1,y1,x2,y2} -> [0,0,0,0],
+[x] players that reconnect when app is waiting for others are not reconnected with their account
+[x] could we just set a game state obj?
+[x] handle what should happen when others attempt to join and game is full
 [ ] handle larger canvas
 [ ] should server handle the null clients?
 [ ] pass handle functions directly to canvas instead of binding via ref
@@ -150,9 +153,6 @@ client
 [ ] undo
 [ ] confirm before clear
 [ ] we are duplicating user information in a lot of places in react state. this comes from the server so it is not the end of the world but feels like everything should be playerIds with one spot to do lookups.
-[ ] players that reconnect when app is waiting for others are not reconnected with their account
-[ ] could we just set a game state obj?
-[ ] handle what should happen when others attempt to join and game is full
 [ ] put people in the 2d players array based on the max number of neighbors possible
 
 <!-- OLD -->

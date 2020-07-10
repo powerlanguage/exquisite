@@ -6,19 +6,19 @@ import { GAME_STATUS } from "./Game";
 import styles from "./Welcome.module.css";
 
 export default function Welcome({
-  setUsername,
   users,
   startGame,
   currentUser,
   gameStatus,
   maxPlayers,
+  joinGame,
 }) {
   return (
     <div className={styles.container}>
       <div className={styles.content}>
         <h1>E X Q U I S I T E</h1>
         {!currentUser.username ? (
-          <SetUsername onSubmit={setUsername} />
+          <SetUsername onSubmit={joinGame} />
         ) : (
           <div>
             <p>
