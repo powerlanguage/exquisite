@@ -6,6 +6,11 @@ import styles from "./Whiteboard.module.css";
 // Still gives the impression of the strokes appearing fairly realtime
 const MAX_BATCH_LENGTH = 20;
 
+// This is stored outside of the component as I was having trouble updating it
+// with set state. Was resulting in stale state getting send over the
+// websockets. Lots of repeating line batches
+let lineBatch = [];
+
 export default function Whiteboard({
   isActive,
   whiteboardId,
@@ -20,7 +25,6 @@ export default function Whiteboard({
   const [isDrawing, setIsDrawing] = useState(false);
   // TODO: Give this a better name
   const [coordinates, setCoordinates] = useState(null);
-  const [lineBatch, updateLineBatch] = useState([]);
   const whiteboardRef = useRef(null);
   const [color, setColor] = useState("black");
   const [brushSize, setBrushSize] = useState(3);
@@ -34,12 +38,37 @@ export default function Whiteboard({
     return { x, y };
   };
 
+  const sendLineBatch = useCallback(
+    (clear = true) => {
+      if (lineBatch.length === 0) {
+        console.log("line batch length 0, not sending");
+        return;
+      }
+      sendMessage(
+        JSON.stringify({
+          type: "emit draw",
+          payload: { whiteboardId, lineBatch, color, brushSize },
+        })
+      );
+      console.log(`sending line batch, length: ${lineBatch.length}`);
+      console.log(lineBatch);
+      if (clear) {
+        lineBatch = [];
+      }
+    },
+    [whiteboardId, color, brushSize, sendMessage]
+  );
+
   const addToLineBatch = useCallback(
     (lineData) => {
-      updateLineBatch([...lineBatch, lineData]);
-      console.log(lineBatch);
+      if (lineBatch.length > MAX_BATCH_LENGTH) {
+        sendLineBatch(false);
+        lineBatch = [lineData];
+      } else {
+        lineBatch.push(lineData);
+      }
     },
-    [lineBatch]
+    [sendLineBatch]
   );
 
   // Draw a single line to the canvas. Can be either local or remote.
@@ -88,9 +117,8 @@ export default function Whiteboard({
       // Do not delay when drawing history as the hard coded timeout can result
       // in some lines appearing on top of ones they were drawn under. I belive
       // this is due to lineBatch length not being factored into the timeout
-      // delay. This is not an issue during regular drawing due to the fact we
-      // have a max batch size. Actually, now that I saw that, history should
-      // have a max batch size too so IDK what is up.
+      // delay. If we receive to line batches, one small and one long they can
+      // end up being drawn at different times
       if (delay) {
         lineBatch.forEach((line, i) =>
           setTimeout(() => {
@@ -118,21 +146,6 @@ export default function Whiteboard({
       );
     }
   }, [sendMessage, whiteboardId, isActive]);
-
-  const sendLineBatch = useCallback(() => {
-    if (lineBatch.length === 0) {
-      console.log("line batch length 0, not sending");
-      return;
-    }
-    sendMessage(
-      JSON.stringify({
-        type: "emit draw",
-        payload: { whiteboardId, lineBatch, color, brushSize },
-      })
-    );
-    console.log(`sending line batch, length: ${lineBatch.length}`);
-    updateLineBatch([]);
-  }, [lineBatch, whiteboardId, color, brushSize, sendMessage]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -210,7 +223,7 @@ export default function Whiteboard({
     if (lineBatch.length >= MAX_BATCH_LENGTH) {
       sendLineBatch();
     }
-  }, [lineBatch, sendLineBatch]);
+  }, [sendLineBatch]);
 
   useEffect(() => {
     if (!isDrawing) {
