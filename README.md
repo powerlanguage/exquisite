@@ -47,6 +47,8 @@ TODO:
 ```
 line = [x1, y1, x2, y2 ]
 
+
+// whiteboardId is also required somewhere
 drawOperation = { lines: [line, line], color, brushSize }
 
 drawOperations = [drawOperation]
