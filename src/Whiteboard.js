@@ -26,7 +26,7 @@ export default function Whiteboard({
   // TODO: Give this a better name
   const [coordinates, setCoordinates] = useState(null);
   const whiteboardRef = useRef(null);
-  const [color, setColor] = useState("black");
+  const [color, setColor] = useState("#222222");
   const [brushSize, setBrushSize] = useState(3);
 
   const getRelativeCoords = (e) => {
