@@ -118,7 +118,7 @@ function shiftValueToCenterAndWrap(arr, value) {
 // Returns a 3x3 2D array of neighbors for the given row/col indices
 // if wrap = true, out of bounds neighbors will wrap to the opposite edge
 // if wrap = false those neighbors will be null
-function getNeighborsByIndex(arr, col, row, wrap = true) {
+function generateNeighborHoodForIndex(arr, col, row, wrap = true) {
   const height = arr.length;
   const width = arr[0].length;
 
@@ -156,14 +156,15 @@ function getNeighborsByIndex(arr, col, row, wrap = true) {
   return output;
 }
 
-function getNeighborsFromPlayers(players, item, wrap) {
+function generateNeighborhood(players, player, wrap) {
   const players2d = convert1dTo2dArray(players);
-  const [col, row] = getCoords(players2d, item);
-  return getNeighborsByIndex(players2d, col, row, wrap);
+  const [col, row] = getCoords(players2d, player);
+  return generateNeighborHoodForIndex(players2d, col, row, wrap);
 }
 
 module.exports = {
   convert1dTo2dArray,
+  convert2dTo1dArray,
   shiftValueToCenterAndWrap,
-  getNeighborsFromPlayers,
+  generateNeighborhood,
 };
