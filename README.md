@@ -47,7 +47,7 @@ TODO:
 ```
 line = [x1, y1, x2, y2 ]
 
-drawOperation = { lines: [line], color, brushSize }
+drawOperation = { lines: [line, line], color, brushSize }
 
 drawOperations = [drawOperation]
 
@@ -55,9 +55,24 @@ history: [whiteboardId]: drawOperations;
 
 drawOperations are independent of lines.
 
+for the most part, a whiteboard should only receive a single draw operation at a time.
+
+the exception to this is when receiving history.
+
 lines are used to draw to the local canvas
 
 when lines hits a certain limit, we package them into a draw operation and send them off
 
+
+right now we have:
+
+emit draw:
+
+{
+    whiteboardId
+    color
+    brushSize
+    lineBatch[{x1,y1,x2,y2}, {x1,y1,x2,y2}]
+}
 
 ```

@@ -37,15 +37,18 @@ export default function Whiteboard({
   const addToLineBatch = useCallback(
     (lineData) => {
       updateLineBatch([...lineBatch, lineData]);
+      console.log(lineBatch);
     },
     [lineBatch]
   );
 
   // Draw a single line to the canvas. Can be either local or remote.
-  const drawLine = useCallback(({ x1, y1, x2, y2, color, brushSize }) => {
+  const drawLine = useCallback(({ line, color, brushSize }) => {
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     const ctx = whiteboard.getContext("2d");
+
+    const [x1, y1, x2, y2] = line;
 
     ctx.beginPath();
     ctx.strokeStyle = color;
@@ -64,15 +67,10 @@ export default function Whiteboard({
       if (isDrawing && coordinates) {
         const { x, y } = getRelativeCoords(e);
 
-        const lineCoords = {
-          x1: coordinates.x,
-          y1: coordinates.y,
-          x2: x,
-          y2: y,
-        };
+        const lineCoords = [coordinates.x, coordinates.y, x, y];
 
         drawLine({
-          ...lineCoords,
+          line: lineCoords,
           color,
           brushSize,
         });
@@ -96,11 +94,11 @@ export default function Whiteboard({
       if (delay) {
         lineBatch.forEach((line, i) =>
           setTimeout(() => {
-            drawLine({ ...line, brushSize, color });
+            drawLine({ line, brushSize, color });
           }, i * 10)
         );
       } else {
-        lineBatch.forEach((line, i) => drawLine({ ...line, brushSize, color }));
+        lineBatch.forEach((line, i) => drawLine({ line, brushSize, color }));
       }
     },
     [drawLine]
@@ -132,7 +130,7 @@ export default function Whiteboard({
         payload: { whiteboardId, lineBatch, color, brushSize },
       })
     );
-    console.log(`line batch length: ${lineBatch.length}`);
+    console.log(`sending line batch, length: ${lineBatch.length}`);
     updateLineBatch([]);
   }, [lineBatch, whiteboardId, color, brushSize, sendMessage]);
 
