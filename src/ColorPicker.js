@@ -33,7 +33,11 @@ function ColorButton({ color, onClick }) {
   );
 }
 
-export default function ColorPicker({ onChangeColor, menuCollapsed }) {
+export default function ColorPicker({
+  onChangeColor,
+  menuCollapsed,
+  onShowFlyout,
+}) {
   const [showPalette, setShowPalette] = useState(false);
   const [currentColor, setCurrentColor] = useState("#000"); // Should be whatever the whiteboard has as default?
 
@@ -43,9 +47,26 @@ export default function ColorPicker({ onChangeColor, menuCollapsed }) {
     setShowPalette(false);
   };
 
+  const showFlyout = () => {
+    setShowPalette(true);
+    onShowFlyout();
+  };
+
+  const hideFlyout = () => {
+    setShowPalette(false);
+  };
+
+  const toggleShowFlyout = () => {
+    if (showPalette) {
+      hideFlyout();
+    } else {
+      showFlyout();
+    }
+  };
+
   useEffect(() => {
     if (menuCollapsed) {
-      setShowPalette(false);
+      hideFlyout();
     }
   }, [menuCollapsed]);
 
@@ -64,10 +85,7 @@ export default function ColorPicker({ onChangeColor, menuCollapsed }) {
           </div>
         </div>
       )}
-      <ColorButton
-        color={currentColor}
-        onClick={() => setShowPalette(!showPalette)}
-      />
+      <ColorButton color={currentColor} onClick={() => toggleShowFlyout()} />
     </div>
   );
 }

@@ -2,7 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import styles from "./WhiteboardControls.module.css";
 import BrushSizePicker from "./BrushSizePicker";
 import ColorPicker from "./ColorPicker";
+import ClearPicker from "./ClearPicker";
 import ControlButton from "./ControlButton";
+
+export const FLYOUTS = {
+  NONE: "NONE",
+  COLOR_PICKER: "COLOR_PICKER",
+  CLEAR_CONFIRM: "CLEAR_CONFIRM",
+};
 
 export default function WhiteboardControls({
   handleChangeColor,
@@ -14,6 +21,7 @@ export default function WhiteboardControls({
   const controlsRef = useRef(null);
   const toggleButtonRef = useRef(null);
   const containerRef = useRef(null);
+  const [flyout, setFlyout] = useState(FLYOUTS.NONE);
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -33,17 +41,27 @@ export default function WhiteboardControls({
     <div className={styles.container} ref={containerRef}>
       <div
         className={styles.controls}
-        style={{ marginLeft: `${collapsed ? collapsedMargin : 0}px` }}
+        style={{
+          marginLeft: `${collapsed ? collapsedMargin : 0}px`,
+        }}
         ref={controlsRef}
       >
         <ColorPicker
           onChangeColor={handleChangeColor}
-          menuCollapsed={collapsed}
+          menuCollapsed={flyout !== FLYOUTS.COLOR_PICKER || collapsed}
+          onShowFlyout={() => setFlyout(FLYOUTS.COLOR_PICKER)}
         />
         <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
-        <ControlButton onClick={handleClear}>clear</ControlButton>
+        <ClearPicker
+          onClear={handleClear}
+          menuCollapsed={flyout !== FLYOUTS.CLEAR_CONFIRM || collapsed}
+          onShowFlyout={() => setFlyout(FLYOUTS.CLEAR_CONFIRM)}
+        />
         <ControlButton
-          onClick={() => setCollapsed(!collapsed)}
+          onClick={() => {
+            setCollapsed(!collapsed);
+            setFlyout(FLYOUTS.NONE);
+          }}
           ref={toggleButtonRef}
         >
           {collapsed ? `»` : `«`}

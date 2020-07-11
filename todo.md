@@ -134,6 +134,7 @@ client
 [x] players that reconnect when app is waiting for others are not reconnected with their account
 [x] could we just set a game state obj?
 [x] handle what should happen when others attempt to join and game is full
+[x] confirm before clear
 [ ] handle larger canvas
 [ ] should server handle the null clients?
 [ ] pass handle functions directly to canvas instead of binding via ref
@@ -151,7 +152,6 @@ client
 [ ] need a loading state while checking if reconnection is working
 [ ] split color palette into flex rows
 [ ] undo
-[ ] confirm before clear
 [ ] we are duplicating user information in a lot of places in react state. this comes from the server so it is not the end of the world but feels like everything should be playerIds with one spot to do lookups.
 [ ] put people in the 2d players array based on the max number of neighbors possible
 

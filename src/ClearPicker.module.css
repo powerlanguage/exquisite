@@ -1,0 +1,27 @@
+/* 18 comes from the biggest brush size
+TODO: make brush sizes global? */
+
+.confirmationContainer {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 32px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Ideally this would be dynamically determined */
+.confirmation {
+  /* width: 192px; */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.hint {
+  padding: 0 4px;
+  font-size: var(--font-small);
+  line-height: 24px;
+  background-color: var(--white);
+  height: 100%;
+}
