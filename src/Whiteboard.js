@@ -96,8 +96,11 @@ export default function Whiteboard({
       if (isDrawing && coordinates) {
         const { x, y } = getRelativeCoords(e);
 
-        if (x === coordinates.x && y === coordinates.y) {
-          // Mouse hasn't moved. don't draw (was causing us to over-send WS messages)
+        if (lineBatch.length && x === coordinates.x && y === coordinates.y) {
+          // Mouse hasn't moved. don't draw (was causing us to save too many
+          // lines and then over-send WS messages) The lineBatch.length check is
+          // to allow tapping to place a dot, as we dispatch the linebatch on
+          // mouseup
           return;
         }
 
