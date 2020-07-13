@@ -29,6 +29,22 @@ export default function Whiteboard({
   const [color, setColor] = useState("#222222");
   const [brushSize, setBrushSize] = useState(3);
 
+  // Add dpi scaling
+  useEffect(() => {
+    if (!whiteboardRef.current) return;
+    const whiteboard = whiteboardRef.current;
+    const ctx = whiteboard.getContext("2d");
+    const dpr = window.devicePixelRatio || 1;
+    // Get the CSS measurements
+    const rect = whiteboard.getBoundingClientRect();
+    // Changes the canvas attributes based on the CSS measurements
+    // We are then scaling it back down with the CSS
+    whiteboard.width = rect.width * dpr;
+    whiteboard.height = rect.height * dpr;
+    // Scales all canvas commands by the DPR
+    ctx.scale(dpr, dpr);
+  }, []);
+
   const getRelativeCoords = (e) => {
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
@@ -264,22 +280,6 @@ export default function Whiteboard({
       whiteboard.removeEventListener("mousemove", draw);
     };
   }, [draw, isActive]);
-
-  // Add dpi scaling
-  useEffect(() => {
-    if (!whiteboardRef.current) return;
-    const whiteboard = whiteboardRef.current;
-    const ctx = whiteboard.getContext("2d");
-    const dpr = window.devicePixelRatio || 1;
-    // Get the CSS measurements
-    const rect = whiteboard.getBoundingClientRect();
-    // Changes the canvas attributes based on the CSS measurements
-    // We are then scaling it back down with the CSS
-    whiteboard.width = rect.width * dpr;
-    whiteboard.height = rect.height * dpr;
-    // Scales all canvas commands by the DPR
-    ctx.scale(dpr, dpr);
-  }, []);
 
   return (
     // TODO: figure out how to not render undefined when no brushSize present
