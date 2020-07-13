@@ -6,6 +6,7 @@ import { useSocket } from "./contexts/socket";
 import useLocalStorage from "./hooks/useLocalStorage";
 
 import styles from "./Game.module.css";
+import LoadingSpinner from "./LoadingSpinner";
 
 console.log("node env:", process.env.NODE_ENV);
 
@@ -42,6 +43,7 @@ export default function Game() {
     finishedState: [[]],
   });
   const [ws, socketReadyState] = useSocket();
+  const [loading, setLoading] = useState(!!localStorage.whiteboardId);
 
   // Check WS ready state before sending
   const sendWSMessage = useCallback(
@@ -90,6 +92,7 @@ export default function Game() {
       }
       case "set current player": {
         setCurrentUser(payload);
+        setLoading(false);
         return;
       }
       case "set neighborhood": {
@@ -105,6 +108,10 @@ export default function Game() {
       }
       case "set history": {
         setWhiteboardHistory(payload);
+        return;
+      }
+      case "unable to reconnect": {
+        setLoading(false);
         return;
       }
       default: {
@@ -148,6 +155,17 @@ export default function Game() {
   ]);
 
   const { gameStatus, users, maxPlayers, finishedState } = gameState;
+
+  // This is gross
+  useEffect(() => {
+    if (gameStatus === "FINISHED") {
+      setLoading(false);
+    }
+  }, [gameStatus]);
+
+  if (loading) {
+    return <LoadingSpinner center />;
+  }
 
   return (
     <div className={styles.container}>
