@@ -14,14 +14,7 @@ export default function Whiteboards({
   whiteboardHistories,
 }) {
   return (
-    <div
-      className={styles.whiteboards}
-      // TODO: figure this out. Unclear why width alone is wrapping for narrower windows
-      style={{
-        height: `${WHITEBOARD_SIZE * playerGrid.length}px`,
-        width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
-      }}
-    >
+    <div className={styles.whiteboards}>
       {playerGrid.map((row, i) => (
         <div
           className={styles.row}

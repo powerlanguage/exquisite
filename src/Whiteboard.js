@@ -11,6 +11,13 @@ const MAX_BATCH_LENGTH = 20;
 // websockets. Lots of repeating line batches
 let lineBatch = [];
 
+// We have to store rawcoords to allow us to draw a dot when a mobile user taps
+// the screen. The coordinates we store in local state have already been
+// transformed to relative coordinates. And right now part of the draw function
+// converts event coords to relative coords. So we can't just pass the
+// coordinates from local state as they will end up being transformed again.
+const rawCoords = {};
+
 export default function Whiteboard({
   isActive,
   whiteboardId,
@@ -45,6 +52,7 @@ export default function Whiteboard({
     ctx.scale(dpr, dpr);
   }, []);
 
+  // Possible to just use offsetX and offsetY for this?
   const getRelativeCoords = (e) => {
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
@@ -242,6 +250,52 @@ export default function Whiteboard({
     [stopDrawing]
   );
 
+  const handleTouchStart = useCallback((e) => {
+    // Prevent the document from scrolling
+    e.preventDefault();
+    const touch = e.touches[0];
+    if (!touch) return;
+    const { clientX, clientY } = touch;
+    rawCoords.clientX = clientX;
+    rawCoords.clientY = clientY;
+    // This is copy/pasta from startDrawing. Need to visit this whole event system.
+    setIsDrawing(true);
+    setCoordinates(getRelativeCoords({ clientX, clientY }));
+    console.log(e.type);
+  }, []);
+
+  const handleTouchMove = useCallback(
+    (e) => {
+      // Prevent the document from scrolling
+      e.preventDefault();
+      const touch = e.touches[0];
+      if (!touch) return;
+      const { clientX, clientY } = touch;
+      rawCoords.clientX = clientX;
+      rawCoords.clientY = clientY;
+      draw({ clientX, clientY });
+    },
+    [draw]
+  );
+
+  const handleTouchEnd = useCallback((e) => {
+    // Prevent the document from scrolling
+    e.preventDefault();
+    // touchend events don't send any coords. If the linebatch is empty and
+    // we're stopping drawing it means that the user has tapped. We want to send
+    // a draw event with the same coords that started the event. However, due to
+    // some bullshit I did earlier, we store the last pressed coordinates as
+    // relative. And the draw function converts the event coords to relative. So
+    // if we pass them again we'll end up double converted. Hence the rawCoords
+    // thing.
+    if (!lineBatch.length) {
+      draw(rawCoords);
+    }
+    setIsDrawing(false);
+    setCoordinates(null);
+    console.log(e.type);
+  });
+
   // Send the batch when it grows beyond a certain size
   useEffect(() => {
     if (lineBatch.length >= MAX_BATCH_LENGTH) {
@@ -263,11 +317,15 @@ export default function Whiteboard({
     whiteboard.addEventListener("mouseup", stopDrawing);
     whiteboard.addEventListener("mouseenter", handleMouseEnter);
     whiteboard.addEventListener("mouseleave", handleMouseLeave);
+    whiteboard.addEventListener("touchstart", handleTouchStart);
+    whiteboard.addEventListener("touchend", handleTouchEnd);
     return () => {
+      whiteboard.removeEventListener("mousedown", startDrawing);
       whiteboard.removeEventListener("mouseup", stopDrawing);
       whiteboard.removeEventListener("mouseenter", handleMouseEnter);
       whiteboard.removeEventListener("mouseleave", handleMouseLeave);
-      whiteboard.removeEventListener("mousedown", startDrawing);
+      whiteboard.removeEventListener("touchstart", handleTouchStart);
+      whiteboard.removeEventListener("touchend", handleTouchEnd);
     };
   }, [startDrawing, stopDrawing, handleMouseLeave, handleMouseEnter, isActive]);
 
@@ -276,8 +334,10 @@ export default function Whiteboard({
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     whiteboard.addEventListener("mousemove", draw);
+    whiteboard.addEventListener("touchmove", handleTouchMove);
     return () => {
       whiteboard.removeEventListener("mousemove", draw);
+      whiteboard.removeEventListener("touchmove", handleTouchMove);
     };
   }, [draw, isActive]);
 
