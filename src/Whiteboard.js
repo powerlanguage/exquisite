@@ -11,12 +11,12 @@ const MAX_BATCH_LENGTH = 20;
 // websockets. Lots of repeating line batches
 let lineBatch = [];
 
-// We have to store rawcoords to allow us to draw a dot when a mobile user taps
+// We have to store lastPositionRaw to allow us to draw a dot when a mobile user taps
 // the screen. The coordinates we store in local state have already been
 // transformed to relative coordinates. And right now part of the draw function
 // converts event coords to relative coords. So we can't just pass the
 // coordinates from local state as they will end up being transformed again.
-const rawCoords = {};
+const lastPositionRaw = {};
 
 export default function Whiteboard({
   isActive,
@@ -31,7 +31,7 @@ export default function Whiteboard({
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // TODO: Give this a better name
-  const [coordinates, setCoordinates] = useState(null);
+  const [lastPosition, setLastPosition] = useState(null);
   const whiteboardRef = useRef(null);
   const [color, setColor] = useState("#222222");
   const [brushSize, setBrushSize] = useState(3);
@@ -53,6 +53,7 @@ export default function Whiteboard({
   }, []);
 
   // Possible to just use offsetX and offsetY for this?
+  // Update to take x/y instead of event?
   const getRelativeCoords = (e) => {
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
@@ -74,8 +75,7 @@ export default function Whiteboard({
           payload: { whiteboardId, lineBatch, color, brushSize },
         })
       );
-      console.log(`sending line batch, length: ${lineBatch.length}`);
-      console.log(lineBatch);
+      // console.log(`sending line batch, length: ${lineBatch.length}`);
       if (clear) {
         lineBatch = [];
       }
@@ -117,10 +117,10 @@ export default function Whiteboard({
   // This is only called for local draw events
   const draw = useCallback(
     (e) => {
-      if (isDrawing && coordinates) {
+      if (isDrawing && lastPosition) {
         const { x, y } = getRelativeCoords(e);
 
-        if (lineBatch.length && x === coordinates.x && y === coordinates.y) {
+        if (lineBatch.length && x === lastPosition.x && y === lastPosition.y) {
           // Mouse hasn't moved. don't draw (was causing us to save too many
           // lines and then over-send WS messages) The lineBatch.length check is
           // to allow tapping to place a dot, as we dispatch the linebatch on
@@ -128,7 +128,7 @@ export default function Whiteboard({
           return;
         }
 
-        const lineCoords = [coordinates.x, coordinates.y, x, y];
+        const lineCoords = [lastPosition.x, lastPosition.y, x, y];
 
         drawLine({
           line: lineCoords,
@@ -137,10 +137,10 @@ export default function Whiteboard({
         });
 
         addToLineBatch(lineCoords);
-        setCoordinates({ x, y });
+        setLastPosition({ x, y });
       }
     },
-    [isDrawing, coordinates, drawLine, color, brushSize, addToLineBatch]
+    [isDrawing, lastPosition, drawLine, color, brushSize, addToLineBatch]
   );
 
   const drawReceivedLineBatch = useCallback(
@@ -220,7 +220,7 @@ export default function Whiteboard({
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
-    setCoordinates(getRelativeCoords(e));
+    setLastPosition(getRelativeCoords(e));
     console.log(e.type);
   }, []);
 
@@ -228,7 +228,7 @@ export default function Whiteboard({
     (e) => {
       draw(e);
       setIsDrawing(false);
-      setCoordinates(null);
+      setLastPosition(null);
       console.log(e.type);
     },
     [draw]
@@ -256,11 +256,11 @@ export default function Whiteboard({
     const touch = e.touches[0];
     if (!touch) return;
     const { clientX, clientY } = touch;
-    rawCoords.clientX = clientX;
-    rawCoords.clientY = clientY;
+    lastPositionRaw.clientX = clientX;
+    lastPositionRaw.clientY = clientY;
     // This is copy/pasta from startDrawing. Need to visit this whole event system.
     setIsDrawing(true);
-    setCoordinates(getRelativeCoords({ clientX, clientY }));
+    setLastPosition(getRelativeCoords({ clientX, clientY }));
     console.log(e.type);
   }, []);
 
@@ -271,8 +271,8 @@ export default function Whiteboard({
       const touch = e.touches[0];
       if (!touch) return;
       const { clientX, clientY } = touch;
-      rawCoords.clientX = clientX;
-      rawCoords.clientY = clientY;
+      lastPositionRaw.clientX = clientX;
+      lastPositionRaw.clientY = clientY;
       draw({ clientX, clientY });
     },
     [draw]
@@ -287,13 +287,13 @@ export default function Whiteboard({
       // a draw event with the same coords that started the event. However, due to
       // some bullshit I did earlier, we store the last pressed coordinates as
       // relative. And the draw function converts the event coords to relative. So
-      // if we pass them again we'll end up double converted. Hence the rawCoords
+      // if we pass them again we'll end up double converted. Hence the lastPositionRaw
       // thing.
       if (!lineBatch.length) {
-        draw(rawCoords);
+        draw(lastPositionRaw);
       }
       setIsDrawing(false);
-      setCoordinates(null);
+      setLastPosition(null);
       console.log(e.type);
     },
     [draw]
