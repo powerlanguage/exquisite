@@ -278,23 +278,26 @@ export default function Whiteboard({
     [draw]
   );
 
-  const handleTouchEnd = useCallback((e) => {
-    // Prevent the document from scrolling
-    e.preventDefault();
-    // touchend events don't send any coords. If the linebatch is empty and
-    // we're stopping drawing it means that the user has tapped. We want to send
-    // a draw event with the same coords that started the event. However, due to
-    // some bullshit I did earlier, we store the last pressed coordinates as
-    // relative. And the draw function converts the event coords to relative. So
-    // if we pass them again we'll end up double converted. Hence the rawCoords
-    // thing.
-    if (!lineBatch.length) {
-      draw(rawCoords);
-    }
-    setIsDrawing(false);
-    setCoordinates(null);
-    console.log(e.type);
-  });
+  const handleTouchEnd = useCallback(
+    (e) => {
+      // Prevent the document from scrolling
+      e.preventDefault();
+      // touchend events don't send any coords. If the linebatch is empty and
+      // we're stopping drawing it means that the user has tapped. We want to send
+      // a draw event with the same coords that started the event. However, due to
+      // some bullshit I did earlier, we store the last pressed coordinates as
+      // relative. And the draw function converts the event coords to relative. So
+      // if we pass them again we'll end up double converted. Hence the rawCoords
+      // thing.
+      if (!lineBatch.length) {
+        draw(rawCoords);
+      }
+      setIsDrawing(false);
+      setCoordinates(null);
+      console.log(e.type);
+    },
+    [draw]
+  );
 
   // Send the batch when it grows beyond a certain size
   useEffect(() => {
@@ -327,7 +330,15 @@ export default function Whiteboard({
       whiteboard.removeEventListener("touchstart", handleTouchStart);
       whiteboard.removeEventListener("touchend", handleTouchEnd);
     };
-  }, [startDrawing, stopDrawing, handleMouseLeave, handleMouseEnter, isActive]);
+  }, [
+    startDrawing,
+    stopDrawing,
+    handleMouseLeave,
+    handleMouseEnter,
+    handleTouchStart,
+    handleTouchEnd,
+    isActive,
+  ]);
 
   useEffect(() => {
     if (!isActive) return;
@@ -339,7 +350,7 @@ export default function Whiteboard({
       whiteboard.removeEventListener("mousemove", draw);
       whiteboard.removeEventListener("touchmove", handleTouchMove);
     };
-  }, [draw, isActive]);
+  }, [draw, handleTouchMove, isActive]);
 
   return (
     // TODO: figure out how to not render undefined when no brushSize present

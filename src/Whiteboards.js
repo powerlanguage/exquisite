@@ -22,6 +22,7 @@ export default function Whiteboards({
             height: WHITEBOARD_SIZE,
             width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
           }}
+          key={i}
         >
           {row.map((player, j) =>
             !!player ? (

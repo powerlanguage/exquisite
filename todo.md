@@ -139,9 +139,10 @@ client
 [x] handle larger canvas
 [x] should server handle the null clients?
 [x] need a loading state while checking if reconnection is working
+[x] touch controls
+[x] loading state
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] support different size screens
-[ ] touch controls
 [ ] eraser?
 [ ] normalization / dynamically fit to screen
 [ ] investigate canvas zooming
@@ -155,7 +156,6 @@ client
 [ ] undo
 [ ] we are duplicating user information in a lot of places in react state. this comes from the server so it is not the end of the world but feels like everything should be playerIds with one spot to do lookups.
 [ ] put people in the 2d players array based on the max number of neighbors possible
-[ ] loading state
 
 When to show loading state?
 When user has a whiteboardId (we check to see if they should re-enter)
