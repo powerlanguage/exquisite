@@ -2,6 +2,7 @@ const express = require("express");
 const app = express();
 const http = require("http");
 const path = require("path");
+require("dotenv").config();
 const { broadcastGameUpdate, socketize, getBytes } = require("./lib/socket");
 const { prettykBs } = require("./utils/byteSizeHelpers");
 const { startGame, finishGame, resetGame } = require("./lib/game");
