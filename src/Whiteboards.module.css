@@ -1,10 +1,11 @@
 .whiteboards {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
   /* required to remove spacing between individual whiteboards */
   font-size: 0;
   outline: 1px solid var(--lightgray);
   /* We hardcode the width of this div via JS. This centers it */
-  margin: 0 auto;
+  margin: auto;
+}
+
+.row {
+  display: flex;
 }

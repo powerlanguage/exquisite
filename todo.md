@@ -136,8 +136,9 @@ client
 [x] handle what should happen when others attempt to join and game is full
 [x] confirm before clear
 [x] single tap dot
-[ ] handle larger canvas
-[ ] should server handle the null clients?
+[x] handle larger canvas
+[x] should server handle the null clients?
+[x] need a loading state while checking if reconnection is working
 [ ] pass handle functions directly to canvas instead of binding via ref
 [ ] support different size screens
 [ ] touch controls
@@ -150,12 +151,16 @@ client
 [ ] reduce canvas resolution and then scale up (experiment with this)
 [ ] remote canvas components have a bunch of logic that is only used by the local ones. worth refactoring?
 [ ] test page for seeing all components quickly
-[ ] need a loading state while checking if reconnection is working
 [ ] split color palette into flex rows
 [ ] undo
 [ ] we are duplicating user information in a lot of places in react state. this comes from the server so it is not the end of the world but feels like everything should be playerIds with one spot to do lookups.
 [ ] put people in the 2d players array based on the max number of neighbors possible
 [ ] loading state
+
+When to show loading state?
+When user has a whiteboardId (we check to see if they should re-enter)
+User joins during end state
+There is no gameState obj
 
 <!-- OLD -->
 

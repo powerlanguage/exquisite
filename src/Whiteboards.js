@@ -22,44 +22,52 @@ export default function Whiteboards({
         width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
       }}
     >
-      {playerGrid.map((row, i) =>
-        row.map((player, j) =>
-          !!player ? (
-            <Whiteboard
-              isActive={
-                gameStatus === GAME_STATUS.IN_PROGRESS &&
-                player.playerId === currentUser.playerId
-              }
-              username={player.username}
-              whiteboardId={player.whiteboardId}
-              width={WHITEBOARD_SIZE}
-              height={WHITEBOARD_SIZE}
-              sendMessage={sendWSMessage}
-              lastMessage={
-                gameStatus === GAME_STATUS.IN_PROGRESS &&
-                lastMessage &&
-                lastMessage.payload &&
-                lastMessage.payload.whiteboardId === player.whiteboardId
-                  ? lastMessage
-                  : null
-              }
-              whiteboardHistory={
-                gameStatus === GAME_STATUS.IN_PROGRESS
-                  ? whiteboardHistories[player.whiteboardId] || null
-                  : player.history
-              }
-              showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
-              key={`${i}${j}`}
-            />
-          ) : (
-            <WhiteboardPlaceholder
-              width={WHITEBOARD_SIZE}
-              height={WHITEBOARD_SIZE}
-              key={`${i}${j}`}
-            />
-          )
-        )
-      )}
+      {playerGrid.map((row, i) => (
+        <div
+          className={styles.row}
+          style={{
+            height: WHITEBOARD_SIZE,
+            width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
+          }}
+        >
+          {row.map((player, j) =>
+            !!player ? (
+              <Whiteboard
+                isActive={
+                  gameStatus === GAME_STATUS.IN_PROGRESS &&
+                  player.playerId === currentUser.playerId
+                }
+                username={player.username}
+                whiteboardId={player.whiteboardId}
+                width={WHITEBOARD_SIZE}
+                height={WHITEBOARD_SIZE}
+                sendMessage={sendWSMessage}
+                lastMessage={
+                  gameStatus === GAME_STATUS.IN_PROGRESS &&
+                  lastMessage &&
+                  lastMessage.payload &&
+                  lastMessage.payload.whiteboardId === player.whiteboardId
+                    ? lastMessage
+                    : null
+                }
+                whiteboardHistory={
+                  gameStatus === GAME_STATUS.IN_PROGRESS
+                    ? whiteboardHistories[player.whiteboardId] || null
+                    : player.history
+                }
+                showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
+                key={`${i}${j}`}
+              />
+            ) : (
+              <WhiteboardPlaceholder
+                width={WHITEBOARD_SIZE}
+                height={WHITEBOARD_SIZE}
+                key={`${i}${j}`}
+              />
+            )
+          )}
+        </div>
+      ))}
     </div>
   );
 }
