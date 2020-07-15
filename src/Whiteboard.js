@@ -23,11 +23,13 @@ export default function Whiteboard({
   lastMessage,
   whiteboardHistory,
   showBorder,
+  scale,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // This is the RAW (not relative) pixel values stored as { x, y }
   const [lastPosition, setLastPosition] = useState(null);
   const whiteboardRef = useRef(null);
+  const containerRef = useRef(null);
   const [color, setColor] = useState("#222222");
   const [brushSize, setBrushSize] = useState(3);
 
@@ -70,7 +72,10 @@ export default function Whiteboard({
     const { left, top } = whiteboard.getBoundingClientRect();
     const relativeX = Math.floor(x - left);
     const relativeY = Math.floor(y - top);
-    return { x: relativeX, y: relativeY };
+    const scaledX = Math.floor(relativeX / scale);
+    const scaledY = Math.floor(relativeY / scale);
+
+    return { x: scaledX, y: scaledY };
   };
 
   const sendLineBatch = useCallback(
@@ -112,6 +117,11 @@ export default function Whiteboard({
     const ctx = whiteboard.getContext("2d");
 
     let [x1, y1, x2, y2] = line;
+
+    x1 *= scale;
+    y1 *= scale;
+    x2 *= scale;
+    y2 *= scale;
 
     // safari won't draw a dot if moveTo and lineTo have the same coords. We add
     // a tiny offset to placate it.
@@ -381,6 +391,7 @@ export default function Whiteboard({
         ${styles[isActive ? "active" : "inactive"]}
         ${styles[isActive ? `brushSize-${brushSize}` : ""]} 
       `}
+      ref={containerRef}
     >
       <canvas
         width={width}
