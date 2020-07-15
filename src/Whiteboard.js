@@ -18,6 +18,8 @@ let lineBatch = [];
 // coordinates from local state as they will end up being transformed again.
 const lastPositionRaw = {};
 
+const isSafari = navigator.userAgent.toLocaleLowerCase().includes("safari");
+
 export default function Whiteboard({
   isActive,
   whiteboardId,
@@ -116,7 +118,14 @@ export default function Whiteboard({
     const whiteboard = whiteboardRef.current;
     const ctx = whiteboard.getContext("2d");
 
-    const [x1, y1, x2, y2] = line;
+    let [x1, y1, x2, y2] = line;
+
+    // safari won't draw a dot if moveTo and lineTo have the same coords. We add
+    // a tiny offset to placate it.
+    if (x1 === x2 && y1 === y2 && isSafari) {
+      x2 -= 0.00001;
+      y2 -= 0.00001;
+    }
 
     ctx.beginPath();
     ctx.strokeStyle = color;
@@ -134,7 +143,6 @@ export default function Whiteboard({
     (e) => {
       if (isDrawing && lastPosition) {
         const { x, y } = getRelativeCoords(e);
-
         if (lineBatch.length && x === lastPosition.x && y === lastPosition.y) {
           // Mouse hasn't moved. don't draw (was causing us to save too many
           // lines and then over-send WS messages) The lineBatch.length check is
