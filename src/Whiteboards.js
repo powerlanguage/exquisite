@@ -5,6 +5,11 @@ import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import styles from "./Whiteboards.module.css";
 
 const DEFAULT_SCALE = 1;
+// These are actually what % of the screen the canvas fills
+const ZOOMED_IN = 0.9;
+const ZOOMED_OUT = 0.6;
+
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 export default function Whiteboards({
   // This can be either a neighborhood or the final complete canvas
@@ -16,21 +21,21 @@ export default function Whiteboards({
   whiteboardHistories,
 }) {
   const [scale, setScale] = useState(DEFAULT_SCALE);
+  const [mobileZoom, setMobileZoom] = useState(ZOOMED_IN);
   const containerRef = useRef(null);
 
   // If on mobile, scale each canvas up to fill 90% of the screen
   useEffect(() => {
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     if (!isMobile) return;
     if (!containerRef.current) return;
 
     const container = containerRef.current;
     // Need to check which is narrower width or height. Need to take effect on resize?
     const windowWidth = window.innerWidth;
-    const scale = (windowWidth / WHITEBOARD_SIZE) * 0.9;
+    const scale = (windowWidth / WHITEBOARD_SIZE) * mobileZoom;
     container.style.transformOrigin = "top left";
     setScale(scale);
-  }, []);
+  }, [mobileZoom]);
 
   useEffect(() => {
     if (!scale) return;
@@ -50,6 +55,10 @@ export default function Whiteboards({
     const scrollY = (pageHeight - screenHeight) / 2;
     window.scroll(scrollX, scrollY);
   }, [scale]);
+
+  const toggleZoom = () => {
+    setMobileZoom(mobileZoom === ZOOMED_IN ? ZOOMED_OUT : ZOOMED_IN);
+  };
 
   return (
     <div className={styles.whiteboards} ref={containerRef}>
@@ -87,6 +96,7 @@ export default function Whiteboards({
                     ? whiteboardHistories[player.whiteboardId] || null
                     : player.history
                 }
+                toggleZoom={isMobile ? toggleZoom : null}
                 showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
                 key={`${i}${j}`}
                 scale={scale}

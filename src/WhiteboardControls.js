@@ -15,6 +15,8 @@ export default function WhiteboardControls({
   handleChangeColor,
   handleChangeBrushSize,
   handleClear,
+  // Null if not on mobile
+  handleZoom,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [collapsedMargin, setCollapsedMargin] = useState(0);
@@ -57,6 +59,7 @@ export default function WhiteboardControls({
           menuCollapsed={flyout !== FLYOUTS.CLEAR_CONFIRM || collapsed}
           onShowFlyout={() => setFlyout(FLYOUTS.CLEAR_CONFIRM)}
         />
+        {handleZoom && <ControlButton onClick={handleZoom}>🔎</ControlButton>}
         <ControlButton
           onClick={() => {
             setCollapsed(!collapsed);

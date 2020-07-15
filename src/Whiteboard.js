@@ -24,6 +24,7 @@ export default function Whiteboard({
   whiteboardHistory,
   showBorder,
   scale,
+  toggleZoom,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // This is the RAW (not relative) pixel values stored as { x, y }
@@ -392,6 +393,7 @@ export default function Whiteboard({
             handleChangeColor={setColor}
             handleClear={clearWhiteboard}
             handleChangeBrushSize={setBrushSize}
+            handleZoom={toggleZoom}
           />
         )}
       </div>
