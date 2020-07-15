@@ -71,13 +71,13 @@ export default function Whiteboard({
 
   // Possible to just use offsetX and offsetY for this?
   // Update to take x/y instead of event?
-  const getRelativeCoords = (e) => {
+  const getRelativeCoords = ({ x, y }) => {
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
     const { left, top } = whiteboard.getBoundingClientRect();
-    const x = Math.floor(e.clientX - left);
-    const y = Math.floor(e.clientY - top);
-    return { x, y };
+    const relativeX = Math.floor(x - left);
+    const relativeY = Math.floor(y - top);
+    return { x: relativeX, y: relativeY };
   };
 
   const sendLineBatch = useCallback(
@@ -142,7 +142,10 @@ export default function Whiteboard({
   const draw = useCallback(
     (e) => {
       if (isDrawing && lastPosition) {
-        const { x, y } = getRelativeCoords(e);
+        const { x, y } = getRelativeCoords({
+          x: e.clientX,
+          y: e.clientY,
+        });
         if (lineBatch.length && x === lastPosition.x && y === lastPosition.y) {
           // Mouse hasn't moved. don't draw (was causing us to save too many
           // lines and then over-send WS messages) The lineBatch.length check is
@@ -243,7 +246,7 @@ export default function Whiteboard({
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
-    setLastPosition(getRelativeCoords(e));
+    setLastPosition(getRelativeCoords({ x: e.clientX, y: e.clientY }));
     console.log(e.type);
   }, []);
 
@@ -283,7 +286,7 @@ export default function Whiteboard({
     lastPositionRaw.clientY = clientY;
     // This is copy/pasta from startDrawing. Need to visit this whole event system.
     setIsDrawing(true);
-    setLastPosition(getRelativeCoords({ clientX, clientY }));
+    setLastPosition(getRelativeCoords({ x: clientX, y: clientY }));
     console.log(e.type);
   }, []);
 
