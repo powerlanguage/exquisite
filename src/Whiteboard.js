@@ -11,13 +11,6 @@ const MAX_BATCH_LENGTH = 20;
 // websockets. Lots of repeating line batches
 let lineBatch = [];
 
-// We have to store lastPositionRaw to allow us to draw a dot when a mobile user taps
-// the screen. The coordinates we store in local state have already been
-// transformed to relative coordinates. And right now part of the draw function
-// converts event coords to relative coords. So we can't just pass the
-// coordinates from local state as they will end up being transformed again.
-const lastPositionRaw = {};
-
 const isSafari = navigator.userAgent.toLocaleLowerCase().includes("safari");
 
 export default function Whiteboard({
@@ -32,7 +25,7 @@ export default function Whiteboard({
   showBorder,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
-  // TODO: Give this a better name
+  // This is the RAW (not relative) pixel values stored as { x, y }
   const [lastPosition, setLastPosition] = useState(null);
   const whiteboardRef = useRef(null);
   const [color, setColor] = useState("#222222");
@@ -137,13 +130,10 @@ export default function Whiteboard({
     ctx.closePath();
   }, []);
 
-  // TODO: give this a better name. confusing with drawLine
   // This is only called for local draw events
   const draw = useCallback(
-    (e) => {
+    (rawX, rawY) => {
       if (isDrawing && lastPosition) {
-        const { clientX: rawX, clientY: rawY } = e;
-
         const { x, y } = getRelativeCoords({
           x: rawX,
           y: rawY,
@@ -256,7 +246,7 @@ export default function Whiteboard({
 
   const stopDrawing = useCallback(
     (e) => {
-      draw(e);
+      draw(e.clientX, e.clientY);
       setIsDrawing(false);
       setLastPosition(null);
       console.log(e.type);
@@ -273,6 +263,14 @@ export default function Whiteboard({
     [startDrawing]
   );
 
+  const handleMouseMove = useCallback(
+    (e) => {
+      const { clientX, clientY } = e;
+      draw(clientX, clientY);
+    },
+    [draw]
+  );
+
   const handleMouseLeave = useCallback(
     (e) => {
       stopDrawing(e);
@@ -286,8 +284,6 @@ export default function Whiteboard({
     const touch = e.touches[0];
     if (!touch) return;
     const { clientX, clientY } = touch;
-    lastPositionRaw.clientX = clientX;
-    lastPositionRaw.clientY = clientY;
     // This is copy/pasta from startDrawing. Need to visit this whole event system.
     setIsDrawing(true);
     setLastPosition({ x: clientX, y: clientY });
@@ -301,9 +297,7 @@ export default function Whiteboard({
       const touch = e.touches[0];
       if (!touch) return;
       const { clientX, clientY } = touch;
-      lastPositionRaw.clientX = clientX;
-      lastPositionRaw.clientY = clientY;
-      draw({ clientX, clientY });
+      draw(clientX, clientY);
     },
     [draw]
   );
@@ -313,14 +307,10 @@ export default function Whiteboard({
       // Prevent the document from scrolling
       e.preventDefault();
       // touchend events don't send any coords. If the linebatch is empty and
-      // we're stopping drawing it means that the user has tapped. We want to send
-      // a draw event with the same coords that started the event. However, due to
-      // some bullshit I did earlier, we store the last pressed coordinates as
-      // relative. And the draw function converts the event coords to relative. So
-      // if we pass them again we'll end up double converted. Hence the lastPositionRaw
-      // thing.
+      // we're stopping drawing it means that the user has tapped. We send a
+      // draw event with the same coords that started the event.
       if (!lineBatch.length) {
-        draw(lastPositionRaw);
+        draw(lastPosition.x, lastPosition.y);
       }
       setIsDrawing(false);
       setLastPosition(null);
@@ -374,10 +364,10 @@ export default function Whiteboard({
     if (!isActive) return;
     if (!whiteboardRef.current) return;
     const whiteboard = whiteboardRef.current;
-    whiteboard.addEventListener("mousemove", draw);
+    whiteboard.addEventListener("mousemove", handleMouseMove);
     whiteboard.addEventListener("touchmove", handleTouchMove);
     return () => {
-      whiteboard.removeEventListener("mousemove", draw);
+      whiteboard.removeEventListener("mousemove", handleMouseMove);
       whiteboard.removeEventListener("touchmove", handleTouchMove);
     };
   }, [draw, handleTouchMove, isActive]);
