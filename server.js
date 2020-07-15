@@ -1,5 +1,7 @@
 const express = require("express");
+const bodyParser = require("body-parser");
 const app = express();
+app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 const http = require("http");
 const path = require("path");
 require("dotenv").config();
@@ -10,6 +12,7 @@ const {
   finishGame,
   resetGame,
   writeHistoryToFile,
+  setMaxPlayers,
 } = require("./lib/game");
 
 const server = http.createServer(app);
@@ -50,7 +53,14 @@ app.get("/api/bytes", (req, res) => {
 
 app.get("/api/writehistory", async (req, res) => {
   await writeHistoryToFile();
-  res.send("file written");
+  res.send("[http] file written");
+});
+
+app.post("/api/setmaxplayers", (req, res) => {
+  setMaxPlayers(req.body.maxplayers);
+
+  broadcastGameUpdate();
+  res.redirect("/admin");
 });
 
 app.get("/admin", (req, res) => {
