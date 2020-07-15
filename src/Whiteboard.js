@@ -142,11 +142,15 @@ export default function Whiteboard({
   const draw = useCallback(
     (e) => {
       if (isDrawing && lastPosition) {
+        const { clientX: rawX, clientY: rawY } = e;
+
         const { x, y } = getRelativeCoords({
-          x: e.clientX,
-          y: e.clientY,
+          x: rawX,
+          y: rawY,
         });
-        if (lineBatch.length && x === lastPosition.x && y === lastPosition.y) {
+        const { x: prevX, y: prevY } = getRelativeCoords(lastPosition);
+
+        if (lineBatch.length && x === prevX && y === prevY) {
           // Mouse hasn't moved. don't draw (was causing us to save too many
           // lines and then over-send WS messages) The lineBatch.length check is
           // to allow tapping to place a dot, as we dispatch the linebatch on
@@ -154,7 +158,7 @@ export default function Whiteboard({
           return;
         }
 
-        const lineCoords = [lastPosition.x, lastPosition.y, x, y];
+        const lineCoords = [prevX, prevY, x, y];
 
         drawLine({
           line: lineCoords,
@@ -163,7 +167,7 @@ export default function Whiteboard({
         });
 
         addToLineBatch(lineCoords);
-        setLastPosition({ x, y });
+        setLastPosition({ x: rawX, y: rawY });
       }
     },
     [isDrawing, lastPosition, drawLine, color, brushSize, addToLineBatch]
@@ -246,7 +250,7 @@ export default function Whiteboard({
 
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
-    setLastPosition(getRelativeCoords({ x: e.clientX, y: e.clientY }));
+    setLastPosition({ x: e.clientX, y: e.clientY });
     console.log(e.type);
   }, []);
 
@@ -286,7 +290,7 @@ export default function Whiteboard({
     lastPositionRaw.clientY = clientY;
     // This is copy/pasta from startDrawing. Need to visit this whole event system.
     setIsDrawing(true);
-    setLastPosition(getRelativeCoords({ x: clientX, y: clientY }));
+    setLastPosition({ x: clientX, y: clientY });
     console.log(e.type);
   }, []);
 
