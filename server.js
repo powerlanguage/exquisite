@@ -5,7 +5,12 @@ const path = require("path");
 require("dotenv").config();
 const { broadcastGameUpdate, socketize, getBytes } = require("./lib/socket");
 const { prettykBs } = require("./utils/byteSizeHelpers");
-const { startGame, finishGame, resetGame } = require("./lib/game");
+const {
+  startGame,
+  finishGame,
+  resetGame,
+  writeHistoryToFile,
+} = require("./lib/game");
 
 const server = http.createServer(app);
 socketize(server);
@@ -41,6 +46,11 @@ app.get("/api/bytes", (req, res) => {
       )}kB total received: ${prettykBs(received)}kB`
     )
   );
+});
+
+app.get("/api/writehistory", async (req, res) => {
+  await writeHistoryToFile();
+  res.send("file written");
 });
 
 app.get("/admin", (req, res) => {

@@ -8,15 +8,22 @@
   <body>
     <h1 id="bytes"></h1>
     <button id="finish">Finish</button>
-    <button id="reset">Reset</button>
+    <!-- <button id="reset">Reset</button> -->
+    <button id="write-history">Write history to file</button>
     <script>
       document.getElementById("finish").addEventListener("click", function () {
         fetch("/api/finish");
       });
 
-      document.getElementById("reset").addEventListener("click", function () {
-        fetch("/api/reset");
-      });
+      // document.getElementById("reset").addEventListener("click", function () {
+      //   fetch("/api/reset");
+      // });
+
+      document
+        .getElementById("write-history")
+        .addEventListener("click", function () {
+          fetch("/api/writehistory");
+        });
 
       const bytes = document.getElementById("bytes");
 
