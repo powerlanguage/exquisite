@@ -39,6 +39,18 @@ export default function Whiteboards({
     container.style.transform = `scale(${scale.toFixed(2)})`;
   }, [scale]);
 
+  // Scroll to center
+  useEffect(() => {
+    if (!document.documentElement) return;
+    const pageWidth = document.documentElement.scrollWidth;
+    const pageHeight = document.documentElement.scrollHeight;
+    const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
+    const scrollX = (pageWidth - screenWidth) / 2;
+    const scrollY = (pageHeight - screenHeight) / 2;
+    window.scroll(scrollX, scrollY);
+  }, [scale]);
+
   return (
     <div className={styles.whiteboards} ref={containerRef}>
       {playerGrid.map((row, i) => (

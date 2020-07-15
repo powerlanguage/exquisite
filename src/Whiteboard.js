@@ -49,21 +49,6 @@ export default function Whiteboard({
     ctx.scale(dpr, dpr);
   }, []);
 
-  // Center active canvas
-  // Might be better to do once in Whiteboards?
-  useEffect(() => {
-    if (!isActive) return;
-    if (!document.documentElement) return;
-    const pageWidth = document.documentElement.scrollWidth;
-    const pageHeight = document.documentElement.scrollHeight;
-    const screenWidth = window.innerWidth;
-    const screenHeight = window.innerHeight;
-    window.scroll(
-      (pageWidth - screenWidth) / 2,
-      (pageHeight - screenHeight) / 2
-    );
-  }, [isActive]);
-
   // Possible to just use offsetX and offsetY for this?
   // Update to take x/y instead of event?
   const getRelativeCoords = ({ x, y }) => {
