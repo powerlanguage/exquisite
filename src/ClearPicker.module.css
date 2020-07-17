@@ -24,4 +24,5 @@ TODO: make brush sizes global? */
   line-height: 24px;
   background-color: var(--white);
   height: 100%;
+  user-select: none;
 }
