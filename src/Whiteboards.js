@@ -11,6 +11,20 @@ const ZOOMED_OUT = 0.6;
 
 const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
+// the direction of neighbors to self
+// [row][col]
+const neighborhoodDirections = {
+  "00": "NW",
+  "01": "N",
+  "02": "NE",
+  "10": "W",
+  "11": "SELF",
+  "12": "E",
+  "20": "SW",
+  "21": "S",
+  "22": "SE",
+};
+
 export default function Whiteboards({
   // This can be either a neighborhood or the final complete canvas
   playerGrid,
@@ -98,8 +112,13 @@ export default function Whiteboards({
                 }
                 toggleZoom={isMobile ? toggleZoom : null}
                 showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
-                key={`${i}${j}-${whiteboardId}`}
+                key={`${i}${j}-${player.whiteboardId}`}
                 scale={scale}
+                direction={
+                  gameStatus === GAME_STATUS.IN_PROGRESS
+                    ? neighborhoodDirections[`${i}${j}`]
+                    : null
+                }
               />
             ) : (
               <WhiteboardPlaceholder

@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import WhiteboardInfo from "./WhiteboardInfo";
 import WhiteboardControls from "./WhiteboardControls";
+import WhiteboardMask from "./WhiteboardMask";
 import styles from "./Whiteboard.module.css";
 
 // Still gives the impression of the strokes appearing fairly realtime
@@ -25,6 +26,7 @@ export default function Whiteboard({
   showBorder,
   scale,
   toggleZoom,
+  direction,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // This is the RAW (not relative) pixel values stored as { x, y }
@@ -387,6 +389,9 @@ export default function Whiteboard({
         style={{ width, height }}
       />
       <div className={styles.overlay}>
+        {direction && direction !== "SELF" && (
+          <WhiteboardMask direction={direction} />
+        )}
         <WhiteboardInfo username={username} isActive={isActive} />
         {isActive && (
           <WhiteboardControls

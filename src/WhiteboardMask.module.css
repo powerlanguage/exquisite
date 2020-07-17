@@ -1,0 +1,29 @@
+.whiteboardMask {
+  position: absolute;
+  background-color: var(--darkestgray);
+  --overlap: 60%;
+}
+
+.N {
+  width: 100%;
+  height: var(--overlap);
+  top: 0;
+}
+
+.S {
+  width: 100%;
+  height: var(--overlap);
+  bottom: 0;
+}
+
+.E {
+  width: var(--overlap);
+  height: 100%;
+  right: 0;
+}
+
+.W {
+  width: var(--overlap);
+  height: 100%;
+  left: 0;
+}
