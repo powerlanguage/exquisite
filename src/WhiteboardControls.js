@@ -1,15 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
 import styles from "./WhiteboardControls.module.css";
-import BrushSizePicker from "./BrushSizePicker";
+import BrushPicker from "./BrushPicker";
 import ColorPicker from "./ColorPicker";
 import ClearPicker from "./ClearPicker";
 import ControlButton from "./ControlButton";
+import EraserPicker from "./EraserPicker";
 
 export const FLYOUTS = {
   NONE: "NONE",
   COLOR_PICKER: "COLOR_PICKER",
   CLEAR_CONFIRM: "CLEAR_CONFIRM",
 };
+
+export const TOOLS = {
+  BRUSH: "BRUSH",
+  ERASER: "ERASER",
+};
+
+const noop = () => {};
 
 export default function WhiteboardControls({
   handleChangeColor,
@@ -24,6 +32,10 @@ export default function WhiteboardControls({
   const toggleButtonRef = useRef(null);
   const containerRef = useRef(null);
   const [flyout, setFlyout] = useState(FLYOUTS.NONE);
+  const [activeTool, setActiveTool] = useState(TOOLS.BRUSH);
+  // We manage the palette color here as we need to return to it when the eraser
+  // is deselected. This is pretty gross and this whole component is now pretty tangled.
+  const [currentPaletteColor, setCurrentPaletteColor] = useState("#222");
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -49,11 +61,26 @@ export default function WhiteboardControls({
         ref={controlsRef}
       >
         <ColorPicker
-          onChangeColor={handleChangeColor}
+          onChangeColor={activeTool !== TOOLS.ERASER ? handleChangeColor : noop}
           menuCollapsed={flyout !== FLYOUTS.COLOR_PICKER || collapsed}
           onShowFlyout={() => setFlyout(FLYOUTS.COLOR_PICKER)}
+          setCurrentPaletteColor={setCurrentPaletteColor}
+          currentPaletteColor={currentPaletteColor}
         />
-        <BrushSizePicker onChangeBrushSize={handleChangeBrushSize} />
+        <BrushPicker
+          onChangeBrushSize={handleChangeBrushSize}
+          isActive={activeTool === TOOLS.BRUSH}
+          setActive={() => {
+            handleChangeColor(currentPaletteColor);
+            setActiveTool(TOOLS.BRUSH);
+          }}
+        />
+        <EraserPicker
+          isActive={activeTool === TOOLS.ERASER}
+          setActive={() => setActiveTool(TOOLS.ERASER)}
+          onChangeBrushSize={handleChangeBrushSize}
+          onChangeColor={handleChangeColor}
+        />
         <ClearPicker
           onClear={handleClear}
           menuCollapsed={flyout !== FLYOUTS.CLEAR_CONFIRM || collapsed}

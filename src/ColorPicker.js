@@ -22,7 +22,7 @@ const COLORS = [
   "#820080", // purple
 ];
 
-function ColorButton({ color, onClick }) {
+function ColorButton({ color, onClick, setLastColor }) {
   return (
     <ControlButton onClick={onClick}>
       <div
@@ -37,13 +37,14 @@ export default function ColorPicker({
   onChangeColor,
   menuCollapsed,
   onShowFlyout,
+  setCurrentPaletteColor,
+  currentPaletteColor,
 }) {
   const [showPalette, setShowPalette] = useState(false);
-  const [currentColor, setCurrentColor] = useState("#000"); // Should be whatever the whiteboard has as default?
 
   const handleColorClick = (color) => {
     onChangeColor(color);
-    setCurrentColor(color);
+    setCurrentPaletteColor(color);
     setShowPalette(false);
   };
 
@@ -85,7 +86,10 @@ export default function ColorPicker({
           </div>
         </div>
       )}
-      <ColorButton color={currentColor} onClick={() => toggleShowFlyout()} />
+      <ColorButton
+        color={currentPaletteColor}
+        onClick={() => toggleShowFlyout()}
+      />
     </div>
   );
 }
