@@ -98,7 +98,7 @@ export default function Whiteboards({
                 }
                 toggleZoom={isMobile ? toggleZoom : null}
                 showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
-                key={`${i}${j}`}
+                key={`${i}${j}-${whiteboardId}`}
                 scale={scale}
               />
             ) : (
