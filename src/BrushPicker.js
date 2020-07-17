@@ -29,6 +29,7 @@ export default function BrushPicker({
         <ControlButton
           key={brushSize}
           onClick={() => handleChangeBrushSize(brushSize)}
+          selected={selectedBrush === brushSize && isActive}
         >
           <div
             className={`

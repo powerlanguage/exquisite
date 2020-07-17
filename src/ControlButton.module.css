@@ -55,6 +55,9 @@
 }
 
 /* inverse colors on mouse-over and focus */
+/* selected is a custom class we added because we want some buttons to behave
+more like toggles */
+.selected,
 .btn:hover,
 .btn:focus {
   color: var(--black);
