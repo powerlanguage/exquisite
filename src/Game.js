@@ -8,8 +8,6 @@ import useLocalStorage from "./hooks/useLocalStorage";
 import styles from "./Game.module.css";
 import LoadingSpinner from "./LoadingSpinner";
 
-console.log("node env:", process.env.NODE_ENV);
-
 export const GAME_STATUS = {
   WAITING: "WAITING",
   IN_PROGRESS: "IN_PROGRESS",
@@ -78,7 +76,7 @@ export default function Game() {
   }, [sendWSMessage, localStorage]);
 
   const handleWSMessage = useCallback((message) => {
-    console.log(message);
+    // console.log(message);
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "update game": {
@@ -96,7 +94,7 @@ export default function Game() {
         return;
       }
       case "set neighborhood": {
-        console.log("setting neighborhood", payload);
+        // console.log("setting neighborhood", payload);
         setNeighborhood(payload);
         return;
       }
@@ -124,7 +122,7 @@ export default function Game() {
   useEffect(() => {
     if (!ws) return;
     ws.onmessage = (event) => {
-      console.log("WS message received");
+      // console.log("WS message received");
       const message = event.data;
       handleWSMessage(message);
     };

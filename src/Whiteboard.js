@@ -67,7 +67,7 @@ export default function Whiteboard({
   const sendLineBatch = useCallback(
     (clear = true) => {
       if (lineBatch.length === 0) {
-        console.log("line batch length 0, not sending");
+        // console.log("line batch length 0, not sending");
         return;
       }
       sendMessage(
@@ -237,7 +237,7 @@ export default function Whiteboard({
   const startDrawing = useCallback((e) => {
     setIsDrawing(true);
     setLastPosition({ x: e.clientX, y: e.clientY });
-    console.log(e.type);
+    // console.log(e.type);
   }, []);
 
   const stopDrawing = useCallback(
@@ -245,7 +245,7 @@ export default function Whiteboard({
       draw(e.clientX, e.clientY);
       setIsDrawing(false);
       setLastPosition(null);
-      console.log(e.type);
+      // console.log(e.type);
     },
     [draw]
   );
@@ -283,7 +283,7 @@ export default function Whiteboard({
     // This is copy/pasta from startDrawing. Need to visit this whole event system.
     setIsDrawing(true);
     setLastPosition({ x: clientX, y: clientY });
-    console.log(e.type);
+    // console.log(e.type);
   }, []);
 
   const handleTouchMove = useCallback(
@@ -310,7 +310,7 @@ export default function Whiteboard({
       }
       setIsDrawing(false);
       setLastPosition(null);
-      console.log(e.type);
+      // console.log(e.type);
     },
     [draw]
   );
