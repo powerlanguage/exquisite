@@ -24,7 +24,7 @@ export default function ClearPicker({ onClear, onShowFlyout, menuCollapsed }) {
 
   const handleClick = (clear) => {
     if (clear) {
-      onClear();
+      onClear(true);
     }
     hideFlyout();
   };

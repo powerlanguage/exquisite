@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import WhiteboardInfo from "./WhiteboardInfo";
-import WhiteboardControls from "./WhiteboardControls";
 import WhiteboardMask from "./WhiteboardMask";
 import styles from "./Whiteboard.module.css";
+import WhiteboardControls from "./WhiteboardControls";
 
 // Still gives the impression of the strokes appearing fairly realtime
 const MAX_BATCH_LENGTH = 20;
@@ -25,17 +25,18 @@ export default function Whiteboard({
   whiteboardHistory,
   showBorder,
   scale,
-  toggleZoom,
   direction,
   showName,
+  color,
+  brushSize,
+  clear,
+  showControls,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // This is the RAW (not relative) pixel values stored as { x, y }
   const [lastPosition, setLastPosition] = useState(null);
   const whiteboardRef = useRef(null);
   const containerRef = useRef(null);
-  const [color, setColor] = useState("#222222");
-  const [brushSize, setBrushSize] = useState(3);
 
   // Add dpi scaling
   useEffect(() => {
@@ -197,6 +198,11 @@ export default function Whiteboard({
       );
     }
   }, [sendMessage, whiteboardId, isActive]);
+
+  useEffect(() => {
+    if (!clear) return;
+    clearWhiteboard();
+  }, [clear, clearWhiteboard]);
 
   useEffect(() => {
     if (!lastMessage) return;
@@ -378,7 +384,7 @@ export default function Whiteboard({
         ${styles.container}
         ${styles[showBorder ? "border" : "noborder"]}
         ${styles[isActive ? "active" : "inactive"]}
-        ${styles[isActive ? `brushSize-${brushSize}` : ""]} 
+        ${styles[isActive ? `brushSize-${brushSize}` : ""]}
       `}
       ref={containerRef}
     >
@@ -398,14 +404,7 @@ export default function Whiteboard({
           isActive={isActive}
           showName={showName}
         />
-        {isActive && (
-          <WhiteboardControls
-            handleChangeColor={setColor}
-            handleClear={clearWhiteboard}
-            handleChangeBrushSize={setBrushSize}
-            handleZoom={toggleZoom}
-          />
-        )}
+        {showControls && <WhiteboardControls />}
       </div>
     </div>
   );

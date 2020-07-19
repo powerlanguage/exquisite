@@ -1,8 +1,10 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useContext } from "react";
 import { WHITEBOARD_SIZE, GAME_STATUS } from "./Game";
 import Whiteboard from "./Whiteboard";
 import WhiteboardPlaceholder from "./WhiteboardPlaceholder";
 import styles from "./Whiteboards.module.css";
+import WhiteboardControls from "./WhiteboardControls";
+import ControlsContext from "./contexts/controls";
 
 const DEFAULT_SCALE = 1;
 // These are actually what % of the screen the canvas fills
@@ -76,61 +78,71 @@ export default function Whiteboards({
     setMobileZoom(mobileZoom === ZOOMED_IN ? ZOOMED_OUT : ZOOMED_IN);
   };
 
+  const { color, brushSize, clear } = useContext(ControlsContext);
+
   return (
-    <div className={styles.whiteboards} ref={containerRef}>
-      {playerGrid.map((row, i) => (
-        <div
-          className={styles.row}
-          style={{
-            height: WHITEBOARD_SIZE,
-            width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
-          }}
-          key={i}
-        >
-          {row.map((player, j) =>
-            !!player ? (
-              <Whiteboard
-                isActive={
-                  gameStatus === GAME_STATUS.IN_PROGRESS &&
-                  player.playerId === currentUser.playerId
-                }
-                username={player.username}
-                whiteboardId={player.whiteboardId}
-                width={WHITEBOARD_SIZE}
-                height={WHITEBOARD_SIZE}
-                sendMessage={sendWSMessage}
-                lastMessage={
-                  gameStatus === GAME_STATUS.IN_PROGRESS &&
-                  lastMessage &&
-                  lastMessage.payload &&
-                  lastMessage.payload.whiteboardId === player.whiteboardId
-                    ? lastMessage
-                    : null
-                }
-                whiteboardHistory={
-                  gameStatus === GAME_STATUS.IN_PROGRESS
-                    ? whiteboardHistories[player.whiteboardId] || null
-                    : player.history
-                }
-                toggleZoom={isMobile ? toggleZoom : null}
-                showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
-                key={`${i}${j}-${player.whiteboardId}`}
-                scale={scale}
-                direction={
-                  maskWhiteboards ? neighborhoodDirections[`${i}${j}`] : null
-                }
-                showName={showNames}
-              />
-            ) : (
-              <WhiteboardPlaceholder
-                width={WHITEBOARD_SIZE}
-                height={WHITEBOARD_SIZE}
-                key={`${i}${j}`}
-              />
-            )
-          )}
-        </div>
-      ))}
-    </div>
+    <React.Fragment>
+      <div className={styles.whiteboards} ref={containerRef}>
+        {playerGrid.map((row, i) => (
+          <div
+            className={styles.row}
+            style={{
+              height: WHITEBOARD_SIZE,
+              width: `${WHITEBOARD_SIZE * playerGrid[0].length}px`,
+            }}
+            key={i}
+          >
+            {row.map((player, j) => {
+              const isActive =
+                !!player &&
+                gameStatus === GAME_STATUS.IN_PROGRESS &&
+                player.playerId === currentUser.playerId;
+              return !!player ? (
+                <Whiteboard
+                  isActive={isActive}
+                  color={color}
+                  brushSize={brushSize}
+                  username={player.username}
+                  whiteboardId={player.whiteboardId}
+                  width={WHITEBOARD_SIZE}
+                  height={WHITEBOARD_SIZE}
+                  sendMessage={sendWSMessage}
+                  lastMessage={
+                    gameStatus === GAME_STATUS.IN_PROGRESS &&
+                    lastMessage &&
+                    lastMessage.payload &&
+                    lastMessage.payload.whiteboardId === player.whiteboardId
+                      ? lastMessage
+                      : null
+                  }
+                  whiteboardHistory={
+                    gameStatus === GAME_STATUS.IN_PROGRESS
+                      ? whiteboardHistories[player.whiteboardId] || null
+                      : player.history
+                  }
+                  toggleZoom={isMobile ? toggleZoom : null}
+                  showBorder={gameStatus === GAME_STATUS.IN_PROGRESS}
+                  key={`${i}${j}-${player.whiteboardId}`}
+                  scale={scale}
+                  direction={
+                    maskWhiteboards ? neighborhoodDirections[`${i}${j}`] : null
+                  }
+                  showName={showNames}
+                  clear={clear}
+                  showControls={isActive && !isMobile}
+                />
+              ) : (
+                <WhiteboardPlaceholder
+                  width={WHITEBOARD_SIZE}
+                  height={WHITEBOARD_SIZE}
+                  key={`${i}${j}`}
+                />
+              );
+            })}
+          </div>
+        ))}
+      </div>
+      {isMobile && <WhiteboardControls handleZoom={toggleZoom} isMobile />}
+    </React.Fragment>
   );
 }

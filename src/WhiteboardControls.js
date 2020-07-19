@@ -1,10 +1,11 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useContext } from "react";
 import styles from "./WhiteboardControls.module.css";
 import BrushPicker from "./BrushPicker";
 import ColorPicker from "./ColorPicker";
 import ClearPicker from "./ClearPicker";
 import ControlButton from "./ControlButton";
 import EraserPicker from "./EraserPicker";
+import ControlsContext from "./contexts/controls";
 
 export const FLYOUTS = {
   NONE: "NONE",
@@ -20,11 +21,9 @@ export const TOOLS = {
 const noop = () => {};
 
 export default function WhiteboardControls({
-  handleChangeColor,
-  handleChangeBrushSize,
-  handleClear,
   // Null if not on mobile
   handleZoom,
+  isMobile,
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [collapsedMargin, setCollapsedMargin] = useState(0);
@@ -36,6 +35,12 @@ export default function WhiteboardControls({
   // We manage the palette color here as we need to return to it when the eraser
   // is deselected. This is pretty gross and this whole component is now pretty tangled.
   const [currentPaletteColor, setCurrentPaletteColor] = useState("#222");
+
+  const {
+    setColor: handleChangeColor,
+    setBrushSize: handleChangeBrushSize,
+    setClear: handleClear,
+  } = useContext(ControlsContext);
 
   useEffect(() => {
     if (!controlsRef.current) return;
@@ -52,7 +57,12 @@ export default function WhiteboardControls({
   }, []);
 
   return (
-    <div className={styles.container} ref={containerRef}>
+    <div
+      className={`${styles.container} ${
+        isMobile ? styles.mobileContainer : styles.desktopContainer
+      }`}
+      ref={containerRef}
+    >
       <div
         className={styles.controls}
         style={{

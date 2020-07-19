@@ -1,9 +1,19 @@
 .container {
+  pointer-events: none;
   padding: 4px;
+}
+
+.mobileContainer {
+  position: fixed;
+  bottom: 2px;
+  left: 25%;
+  transform: scale(1.5);
+}
+
+.desktopContainer {
   width: 100%;
   display: flex;
   justify-content: center;
-  pointer-events: none;
   overflow: hidden;
 }
 
