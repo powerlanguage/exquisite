@@ -33,6 +33,8 @@ export default function Whiteboards({
   sendWSMessage,
   lastMessage,
   whiteboardHistories,
+  showNames,
+  maskWhiteboards,
 }) {
   const [scale, setScale] = useState(DEFAULT_SCALE);
   const [mobileZoom, setMobileZoom] = useState(ZOOMED_IN);
@@ -115,10 +117,9 @@ export default function Whiteboards({
                 key={`${i}${j}-${player.whiteboardId}`}
                 scale={scale}
                 direction={
-                  gameStatus === GAME_STATUS.IN_PROGRESS
-                    ? neighborhoodDirections[`${i}${j}`]
-                    : null
+                  maskWhiteboards ? neighborhoodDirections[`${i}${j}`] : null
                 }
+                showName={showNames}
               />
             ) : (
               <WhiteboardPlaceholder

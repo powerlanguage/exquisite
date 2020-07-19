@@ -39,6 +39,8 @@ export default function Game() {
     gameStatus: GAME_STATUS.WAITING,
     maxPlayers: 0,
     finishedState: [[]],
+    showNames: true,
+    maskWhiteboards: false,
   });
   const [ws, socketReadyState] = useSocket();
   const [loading, setLoading] = useState(!!localStorage.whiteboardId);
@@ -76,7 +78,7 @@ export default function Game() {
   }, [sendWSMessage, localStorage]);
 
   const handleWSMessage = useCallback((message) => {
-    // console.log(message);
+    console.log(message);
     const { type, payload } = JSON.parse(message);
     switch (type) {
       case "update game": {
@@ -85,6 +87,8 @@ export default function Game() {
           gameStatus: payload.status,
           maxPlayers: payload.maxPlayers,
           finishedState: payload.finishedState,
+          showNames: payload.showNames,
+          maskWhiteboards: payload.maskWhiteboards,
         });
         return;
       }
@@ -152,7 +156,14 @@ export default function Game() {
     currentUser.whiteboardId,
   ]);
 
-  const { gameStatus, users, maxPlayers, finishedState } = gameState;
+  const {
+    gameStatus,
+    users,
+    maxPlayers,
+    finishedState,
+    showNames,
+    maskWhiteboards,
+  } = gameState;
 
   // This is gross
   useEffect(() => {
@@ -189,6 +200,8 @@ export default function Game() {
           gameStatus={gameStatus}
           // TODO rename this in local state to be plural
           whiteboardHistories={whiteboardHistory}
+          showNames={showNames}
+          maskWhiteboards={maskWhiteboards}
         />
       )}
     </div>

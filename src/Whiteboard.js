@@ -27,6 +27,7 @@ export default function Whiteboard({
   scale,
   toggleZoom,
   direction,
+  showName,
 }) {
   const [isDrawing, setIsDrawing] = useState(false);
   // This is the RAW (not relative) pixel values stored as { x, y }
@@ -392,7 +393,11 @@ export default function Whiteboard({
         {direction && direction !== "SELF" && (
           <WhiteboardMask direction={direction} />
         )}
-        <WhiteboardInfo username={username} isActive={isActive} />
+        <WhiteboardInfo
+          username={username}
+          isActive={isActive}
+          showName={showName}
+        />
         {isActive && (
           <WhiteboardControls
             handleChangeColor={setColor}

@@ -10,7 +10,7 @@
     <button id="finish">Finish</button>
     <!-- <button id="reset">Reset</button> -->
     <button id="write-history">Write history to file</button>
-    <form action="/api/setmaxplayers" method="post">
+    <form action="/api/updateconfig" method="post">
       Set Max Players:
       <select id="maxplayers" name="maxplayers">
         <option>9</option>
@@ -20,9 +20,48 @@
         <option>49</option>
         <option>64</option>
       </select>
+      <div>
+        Mask whiteboards:
+        <input type="radio" name="mask" id="maskon" value="true" />
+        <label for="maskon">on</label>
+        <input
+          type="radio"
+          name="mask"
+          id="maskoff"
+          value="false"
+          checked="checked"
+        />
+        <label for="maskoff">off</label>
+      </div>
+      <div>
+        Show names:
+        <input
+          type="radio"
+          name="names"
+          id="nameson"
+          value="true"
+          checked="checked"
+        />
+        <label for="nameson">on</label>
+        <input type="radio" name="names" id="namesoff" value="false" />
+        <label for="namesoff">off</label>
+      </div>
       <button type="submit">Submit</button>
     </form>
     <script>
+      const params = new URL(document.location).searchParams;
+      // Values after || are the defaults. Have to do some bullshit with stringifying booleans
+      const maxplayers = params.get("maxplayers") || 9;
+      const mask = params.get("mask") || "false";
+      const names = params.get("names") || "true";
+      document.getElementById("maxplayers").value = maxplayers;
+      document.getElementById(
+        mask === "true" ? "maskon" : "maskoff"
+      ).checked = true;
+      document.getElementById(
+        names === "true" ? "nameson" : "namesoff"
+      ).checked = true;
+
       document.getElementById("finish").addEventListener("click", function () {
         fetch("/api/finish");
       });

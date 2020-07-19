@@ -4,6 +4,7 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true })); // support encoded bodies
 const http = require("http");
 const path = require("path");
+const querystring = require("querystring");
 require("dotenv").config();
 const { broadcastGameUpdate, socketize, getBytes } = require("./lib/socket");
 const { prettykBs } = require("./utils/byteSizeHelpers");
@@ -13,6 +14,8 @@ const {
   resetGame,
   writeHistoryToFile,
   setMaxPlayers,
+  setMaskWhiteboards,
+  setShowNames,
 } = require("./lib/game");
 
 const server = http.createServer(app);
@@ -56,11 +59,20 @@ app.get("/api/writehistory", async (req, res) => {
   res.send("[http] file written");
 });
 
-app.post("/api/setmaxplayers", (req, res) => {
-  setMaxPlayers(req.body.maxplayers);
+app.post("/api/updateconfig", (req, res) => {
+  const { maxplayers, mask, names } = req.body;
 
+  setMaxPlayers(maxplayers);
+  setMaskWhiteboards(mask === "true");
+  setShowNames(names === "true");
+
+  const query = querystring.stringify({
+    maxplayers,
+    mask,
+    names,
+  });
   broadcastGameUpdate();
-  res.redirect("/admin");
+  res.redirect("/admin?" + query);
 });
 
 app.get("/admin", (req, res) => {

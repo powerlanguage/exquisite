@@ -20,3 +20,7 @@
 .active {
   background-color: var(--orangered);
 }
+
+.hidden {
+  visibility: hidden;
+}
