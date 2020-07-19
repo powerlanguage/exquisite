@@ -50,17 +50,13 @@
     </form>
     <script>
       const params = new URL(document.location).searchParams;
-      // Values after || are the defaults. Have to do some bullshit with stringifying booleans
+      // Values after || are the defaults when null is present
       const maxplayers = params.get("maxplayers") || 9;
-      const mask = params.get("mask") || "false";
-      const names = params.get("names") || "true";
+      const mask = JSON.parse(params.get("mask")) || false;
+      const names = JSON.parse(params.get("names")) === false ? false : true;
       document.getElementById("maxplayers").value = maxplayers;
-      document.getElementById(
-        mask === "true" ? "maskon" : "maskoff"
-      ).checked = true;
-      document.getElementById(
-        names === "true" ? "nameson" : "namesoff"
-      ).checked = true;
+      document.getElementById(mask ? "maskon" : "maskoff").checked = true;
+      document.getElementById(names ? "nameson" : "namesoff").checked = true;
 
       document.getElementById("finish").addEventListener("click", function () {
         fetch("/api/finish");

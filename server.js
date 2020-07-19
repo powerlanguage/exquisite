@@ -62,9 +62,9 @@ app.get("/api/writehistory", async (req, res) => {
 app.post("/api/updateconfig", (req, res) => {
   const { maxplayers, mask, names } = req.body;
 
-  setMaxPlayers(maxplayers);
-  setMaskWhiteboards(mask === "true");
-  setShowNames(names === "true");
+  setMaxPlayers(JSON.parse(maxplayers));
+  setMaskWhiteboards(JSON.parse(mask));
+  setShowNames(JSON.parse(names));
 
   const query = querystring.stringify({
     maxplayers,
