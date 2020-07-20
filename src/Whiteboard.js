@@ -201,8 +201,9 @@ export default function Whiteboard({
 
   useEffect(() => {
     if (!clear) return;
+    if (!isActive) return;
     clearWhiteboard();
-  }, [clear, clearWhiteboard]);
+  }, [isActive, clear, clearWhiteboard]);
 
   useEffect(() => {
     if (!lastMessage) return;
